@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
+import Navbar from "@/components/my_components/navbar";
+import Footer from "@/components/my_components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,13 +32,13 @@ export default function RootLayout({
   return (
     <html lang="it" className={`${jakarta.variable} ${geistMono.variable} antialiased`}>
       <body className="font-sans min-h-screen flex flex-col">
-        
+        <Navbar/>
         {/* Aggiungiamo un main per gestire lo spazio se necessario, 
             ma la Navbar è fixed quindi il contenuto parte da top: 0 */}
-        <main className="">
+        <main className="flex-grow">
           {children}
         </main>
-        
+        <Footer/>
       </body>
     </html>
   );

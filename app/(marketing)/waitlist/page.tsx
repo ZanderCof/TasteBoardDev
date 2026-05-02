@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BetaForm } from "@/components/my_components/queue_components/BetaForm";
-import { BetaCountdown } from "@/components/my_components/queue_components/BetaCountdown";
+import { BetaForm } from "@/components/my_components/waitlist_components/BetaForm";
+import { BetaCountdown } from "@/components/my_components/waitlist_components/BetaCountdown";
 import { Sparkles, MousePointer2 } from "lucide-react";
 import Image from "next/image";
 import TasteBoardLogo from "@/public/image/TasteBoard_logo_no_bg.png";

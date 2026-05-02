@@ -21,7 +21,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Come Funziona", href: "/how-it-works" },
-    { name: "Funzionalità", href: "/function" },
+    { name: "Funzionalità", href: "/features" },
     { name: "Prezzi", href: "/pricing" },
   ];
 
@@ -106,17 +106,17 @@ export default function Navbar() {
                   {link.name}
                 </Link>
               ))}
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+              <div className="grid grid-cols-1 gap-4 pt-4 border-t border-slate-100">
                 <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button variant="outline" className="w-full font-bold rounded-xl h-12">
+                  <Button variant="outline" className="w-full bg-red-600 text-white font-bold rounded-xl h-12">
                     Accedi
                   </Button>
                 </Link>
-                <Link href="/register" onClick={() => setIsMobileMenuOpen(false)}>
+                {/* <Link href="/register" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button className="w-full bg-red-600 text-white font-bold rounded-xl h-12">
                     Registrati
                   </Button>
-                </Link>
+                </Link> */}
               </div>
             </motion.div>
           )}

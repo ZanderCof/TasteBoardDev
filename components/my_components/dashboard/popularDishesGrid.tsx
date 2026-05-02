@@ -12,7 +12,7 @@ const dishes = [
 export const PopularDishesGrid = () => (
   <div className="bg-white/40 backdrop-blur-lg border border-white/20 rounded-[2rem] p-8 shadow-sm">
     <div className="flex items-center gap-3 mb-6">
-      <div className="p-2.5 bg-brand-red rounded-xl text-white shadow-lg shadow-red-200">
+      <div className="p-2.5 bg-brand-red rounded-xl text-white bg-red-600 shadow-lg shadow-red-200">
         <UtensilsCrossed size={20} />
       </div>
       <h2 className="text-2xl font-bold text-slate-900">Piatti più ordinati</h2>

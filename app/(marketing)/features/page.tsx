@@ -1,8 +1,8 @@
 "use client";
 
-import { BentoFeatures } from "@/components/my_components/function/bento-features";
-import { DetailSection } from "@/components/my_components/function/detail-section";
-import { FeaturesHero } from "@/components/my_components/function/features-hero";
+import { BentoFeatures } from "@/components/my_components/features/bento-features";
+import { DetailSection } from "@/components/my_components/features/detail-section";
+import { FeaturesHero } from "@/components/my_components/features/features-hero";
 import { FinalCTA } from "@/components/my_components/homepage/homeCTA";
 import { motion } from "framer-motion";
 

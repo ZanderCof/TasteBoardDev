@@ -1,10 +1,11 @@
 "use client";
 
 import React from "react";
-import { Plus, LayoutGrid, FileText, ChevronRight } from "lucide-react";
+import { Plus, LayoutGrid, FileText, ChevronRight, Save } from "lucide-react";
 import Link from "next/link";
 import MenuListCard from "@/components/my_components/dashboard/menu/MenuListCard";
 import CreateMenuCard from "@/components/my_components/dashboard/menu/CreateMenuCard";
+import { motion } from "motion/react";
 
 export default function MenuListPage() {
   return (
@@ -45,6 +46,19 @@ export default function MenuListPage() {
           isActive={false}
           lastUpdate="Ieri"
         />
+        <motion.div
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        className="fixed bottom-8 right-8 z-50 shadow-2xl"
+      >
+        <button className="bg-green-800 hover:bg-brand-red text-white px-8 py-4 rounded-[2rem] font-black flex items-center gap-3 transition-all active:scale-95 group">
+          <Save
+            size={20}
+            className="group-hover:rotate-12 transition-transform"
+          />
+          Salva Modifiche
+        </button>
+      </motion.div>
       </div>
     </div>
   );

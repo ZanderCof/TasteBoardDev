@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "../globals.css";
 import Navbar from "@/components/my_components/navbar";
 import Footer from "@/components/my_components/footer";
+import FloatingBot from "@/components/my_components/FloatingBot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
             ma la Navbar è fixed quindi il contenuto parte da top: 0 */}
         <main className="flex-grow">
           {children}
+          <FloatingBot />
         </main>
         <Footer/>
       </body>

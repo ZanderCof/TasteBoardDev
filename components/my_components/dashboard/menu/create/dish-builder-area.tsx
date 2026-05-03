@@ -2,11 +2,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { PlusCircle, Utensils } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AddDishModal } from "./AddDishModal";
 
 export function DishBuilderArea({ activeTab }: { activeTab: string }) {
   return (
     <AnimatePresence mode="wait">
-      <motion.div 
+      <motion.div
         key={activeTab}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -14,13 +15,19 @@ export function DishBuilderArea({ activeTab }: { activeTab: string }) {
         className="bg-white/60 backdrop-blur-xl rounded-[3.5rem] border border-white p-10 min-h-[650px] shadow-2xl shadow-slate-200/40 relative"
       >
         <div className="flex items-center justify-between mb-12">
-           <div>
-             <h2 className="text-3xl font-black text-slate-900 tracking-tight">{activeTab}</h2>
-             <p className="text-slate-400 font-medium mt-1">Gestisci le portate di questa categoria</p>
-           </div>
-           <Button className="bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold h-12 px-6 shadow-lg shadow-red-100 gap-2">
-             <PlusCircle size={20} /> Aggiungi Piatto
-           </Button>
+          <div>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+              {activeTab}
+            </h2>
+            <p className="text-slate-400 font-medium mt-1">
+              Gestisci le portate di questa categoria
+            </p>
+          </div>
+          <AddDishModal>
+            <Button className="bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold h-12 px-6 shadow-lg shadow-red-100 gap-2">
+              <PlusCircle size={20} /> Aggiungi Piatto
+            </Button>
+          </AddDishModal>
         </div>
 
         {/* Empty State */}
@@ -31,13 +38,21 @@ export function DishBuilderArea({ activeTab }: { activeTab: string }) {
               <Utensils size={48} />
             </div>
           </div>
-          <h3 className="text-2xl font-black text-slate-800">Vuoto come un piatto pulito</h3>
+          <h3 className="text-2xl font-black text-slate-800">
+            Vuoto come un piatto pulito
+          </h3>
           <p className="text-slate-400 text-center max-w-[320px] mt-3 mb-10 font-medium">
-            Inizia a creare il tuo capolavoro culinario per la sezione <span className="text-red-600 font-bold">{activeTab}</span>.
+            Inizia a creare il tuo capolavoro culinario per la sezione{" "}
+            <span className="text-red-600 font-bold">{activeTab}</span>.
           </p>
-          <Button size="lg" className="bg-slate-900 hover:bg-red-600 text-white px-10 h-14 rounded-2xl font-black shadow-xl shadow-slate-200 transition-all active:scale-95">
-             Aggiungi la prima portata
-          </Button>
+          <AddDishModal>
+            <Button
+              size="lg"
+              className="bg-slate-900 hover:bg-red-600 text-white px-10 h-14 rounded-2xl font-black shadow-xl shadow-slate-200 transition-all active:scale-95"
+            >
+              Aggiungi la prima portata
+            </Button>
+          </AddDishModal>
         </div>
       </motion.div>
     </AnimatePresence>

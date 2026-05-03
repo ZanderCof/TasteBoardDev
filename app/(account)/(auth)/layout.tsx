@@ -9,7 +9,7 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const jakarta = Plus_Jakarta_Sans({ 
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-jakarta", // Crea una variabile CSS
 });
@@ -30,16 +30,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it" className={`${jakarta.variable} ${geistMono.variable} antialiased`}>
-      <body className="font-sans min-h-screen flex flex-col">
-        <Navbar/>
-        {/* Aggiungiamo un main per gestire lo spazio se necessario, 
+    <>
+      <Navbar />
+      {/* Aggiungiamo un main per gestire lo spazio se necessario, 
             ma la Navbar è fixed quindi il contenuto parte da top: 0 */}
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer/>
-      </body>
-    </html>
+      <main className="flex-grow">{children}</main>
+      <Footer />
+    </>
   );
 }

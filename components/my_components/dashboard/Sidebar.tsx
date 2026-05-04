@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react"; // Importa quello vero di React
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -13,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { signOut } from "next-auth/react";
 import { motion } from "framer-motion";
 
 const menuItems = [
@@ -25,14 +27,22 @@ const menuItems = [
 
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
+  
+  // 1. Sposta lo stato e la funzione DENTRO il componente
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    await signOut({ callbackUrl: "/login" });
+  };
 
   return (
     <aside className="w-full lg:w-72 h-full flex flex-col bg-white/80 backdrop-blur-xl lg:bg-white border-r border-slate-200 shadow-2xl lg:shadow-none">
-      {/* HEADER LOGO + CLOSE BUTTON (Mobile only) */}
+      {/* HEADER LOGO */}
       <div className="h-20 flex items-center justify-between px-6 border-b border-slate-100">
         <Link href={"/dashboard"}>
           <span className="text-2xl font-black text-slate-900 tracking-tighter">
-            Taste<span className="text-brand-red">board</span>
+            Taste<span className="text-red-600">board</span>
             <span className="text-yellow-400">.</span>
           </span>
         </Link>
@@ -41,6 +51,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         </button>
       </div>
 
+      {/* NAV */}
       <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
@@ -52,7 +63,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
               className={cn(
                 "relative flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold transition-all",
                 isActive
-                  ? "bg-brand-red text-red-600 shadow-lg shadow-red-100 scale-[1.02]"
+                  ? "bg-red-50 text-red-600 shadow-sm scale-[1.02]"
                   : "text-slate-500 hover:bg-slate-50",
               )}
             >
@@ -73,9 +84,15 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           <Settings size={20} />
           Impostazioni
         </Link>
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-400 hover:text-brand-red hover:bg-red-50 transition">
+        
+        {/* BOTTONE LOGOUT CORRETTO */}
+        <button 
+          onClick={handleLogout} 
+          disabled={isLoggingOut} 
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:text-red-600 hover:bg-red-50 transition disabled:opacity-50"
+        >
           <LogOut size={20} />
-          Disconnetti
+          {isLoggingOut ? "Uscita..." : "Disconnetti"}
         </button>
       </div>
     </aside>

@@ -1,65 +1,42 @@
 "use client";
-import React, { useState } from "react";
-import { Save } from "lucide-react";
-import { motion } from "framer-motion";
-import { StoreHeader } from "@/components/my_components/dashboard/store/StoreHeader";
-import { BrandIdentityCard } from "@/components/my_components/dashboard/store/BrandIdentityCard";
-import { StorePreviewCard } from "@/components/my_components/dashboard/store/StorePreviewCard";
+import React, { useState, useEffect } from "react";
+import { Loader2, Plus } from "lucide-react";
 import { AddStoreCard } from "@/components/my_components/dashboard/store/AddStoreCard";
+import { getMyStores } from "./actions";
+import { StoreCard } from "@/components/my_components/dashboard/store/StoreCard";
 
 export default function StoreSettingsPage() {
-  const [isLive, setIsLive] = useState(true);
+  const [stores, setStores] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      const data = await getMyStores();
+      setStores(data);
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  if (loading) return <div className="flex h-96 items-center justify-center"><Loader2 className="animate-spin text-slate-300" size={40} /></div>;
 
   return (
-    <div className="space-y-8 font-jakarta max-w-[1200px] mx-auto pb-24">
-      {/* Intestazione: Nome, Link e Switch Live */}
-      <StoreHeader
-        name="Ristorante Da Mario"
-        slug="da-mario-roma"
-        isLive={isLive}
-        setIsLive={setIsLive}
-      />
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* COLONNA PRINCIPALE (SINISTRA) */}
-        <div className="lg:col-span-8 space-y-8">
-          {/* Identità del brand: Logo, Nome, Bio */}
-          <BrandIdentityCard />
-
-          {/* Spazio per i prossimi componenti: Contatti, Social e Orari */}
-          {/* <div className="p-12 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex items-center justify-center">
-             <p className="text-slate-400 font-medium italic">Prossimo step: Gestione Orari e Contatti</p>
-          </div> */}
-        </div>
-
-        {/* COLONNA LATERALE (DESTRA) - Resta fissa durante lo scroll */}
-        {/* <div className="lg:col-span-4 sticky top-6">
-          <StorePreviewCard />
-        </div> */}
-      </div>
-
-      <div className="lg:col-span-8 space-y-8">
-        {/* Altri componenti... */}
-
-        <div className="pt-4">
-          <AddStoreCard />
+    <div className="space-y-12 font-jakarta max-w-[1200px] mx-auto pb-24 px-4 pt-8">
+      <div className="flex items-center justify-between px-4">
+        <div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">I tuoi <span className="text-red-600">Locali</span></h1>
+          <p className="text-slate-500 font-medium">Gestisci e monitora i tuoi punti vendita attivi.</p>
         </div>
       </div>
-
-      {/* Floating Save Button - Sempre visibile in basso a destra */}
-      <motion.div
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        className="fixed bottom-8 right-8 z-50 shadow-2xl"
-      >
-        <button className="bg-green-800 hover:bg-brand-red text-white px-8 py-4 rounded-[2rem] font-black flex items-center gap-3 transition-all active:scale-95 group">
-          <Save
-            size={20}
-            className="group-hover:rotate-12 transition-transform"
-          />
-          Salva Modifiche
-        </button>
-      </motion.div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {stores.map((store) => (
+          <StoreCard key={store.id} store={store} />
+        ))}
+        
+        {/* Card per aggiungere un nuovo locale sempre alla fine */}
+        <AddStoreCard />
+      </div>
     </div>
   );
 }

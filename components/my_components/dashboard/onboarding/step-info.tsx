@@ -2,17 +2,28 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Camera, Upload, X } from "lucide-react";
+import { Camera, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export function StepInfo() {
+// DEFINIZIONE DELLE PROPS
+interface StepInfoProps {
+  businessName: string;
+  address: string;
+  updateFields: (fields: { businessName?: string; address?: string; logo?: string }) => void;
+}
+
+export function StepInfo({ businessName, address, updateFields }: StepInfoProps) {
   const [image, setImage] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setImage(reader.result as string);
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setImage(base64);
+        updateFields({ logo: base64 }); // Passiamo il logo al padre
+      };
       reader.readAsDataURL(file);
     }
   };
@@ -55,7 +66,6 @@ export function StepInfo() {
             </AnimatePresence>
           </div>
 
-          {/* Hidden Input */}
           <input
             type="file"
             accept="image/*"
@@ -63,10 +73,12 @@ export function StepInfo() {
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
           />
 
-          {/* Remove Button */}
           {image && (
             <button
-              onClick={() => setImage(null)}
+              onClick={() => {
+                setImage(null);
+                updateFields({ logo: "" });
+              }}
               className="absolute -top-2 -right-2 bg-slate-900 text-white p-1.5 rounded-full shadow-lg hover:bg-red-600 transition-colors z-20"
             >
               <X size={14} />
@@ -83,6 +95,8 @@ export function StepInfo() {
           <Label htmlFor="restaurantName" className="font-bold text-slate-700">Nome del Locale</Label>
           <Input 
             id="restaurantName" 
+            value={businessName} // Valore collegato al padre
+            onChange={(e) => updateFields({ businessName: e.target.value })} // Aggiorna il padre
             placeholder="es. Pizzeria da Mario" 
             className="h-12 rounded-xl border-slate-200 focus:ring-red-500 focus:border-red-500" 
           />
@@ -91,6 +105,8 @@ export function StepInfo() {
           <Label htmlFor="address" className="font-bold text-slate-700">Indirizzo</Label>
           <Input 
             id="address" 
+            value={address} // Valore collegato al padre
+            onChange={(e) => updateFields({ address: e.target.value })} // Aggiorna il padre
             placeholder="Via Roma 1, Milano" 
             className="h-12 rounded-xl border-slate-200 focus:ring-red-500 focus:border-red-500" 
           />

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "../../globals.css";
 import Navbar from "@/components/my_components/navbar";
 import Footer from "@/components/my_components/footer";
+import { Providers } from "@/components/my_components/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +32,13 @@ export default function RootLayout({
 }>) {
   return (
     <>
-      <Navbar />
-      {/* Aggiungiamo un main per gestire lo spazio se necessario, 
-            ma la Navbar è fixed quindi il contenuto parte da top: 0 */}
-      <main className="flex-grow">{children}</main>
-      <Footer />
+      <Providers>
+        <Navbar />
+
+        <main className="flex-grow">{children}</main>
+
+        <Footer />
+      </Providers>
     </>
   );
 }

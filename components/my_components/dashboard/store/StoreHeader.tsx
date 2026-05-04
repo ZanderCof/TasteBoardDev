@@ -10,18 +10,15 @@ interface StoreHeaderProps {
 }
 
 export const StoreHeader = ({ name, slug, isLive, setIsLive }: StoreHeaderProps) => (
-  <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 font-jakarta">
+  <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 font-jakarta px-4">
     <div>
       <div className="flex items-center gap-3 mb-2">
         <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-          Gestione <span className="text-brand-red">Locali</span>
+          Gestione <span className="text-red-600">{name}</span>
         </h1>
-        {/* <span className="bg-brand-red/10 text-brand-red text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
-          Premium
-        </span> */}
       </div>
       <p className="text-slate-500 font-medium italic flex items-center gap-2 text-sm">
-        <Globe size={14} /> tasteboard.io/{slug}
+        <Globe size={14} /> tasteboard.io/{slug || "il-tuo-locale"}
       </p>
     </div>
 

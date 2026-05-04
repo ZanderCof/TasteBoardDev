@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/my_components/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const jakarta = Plus_Jakarta_Sans({ 
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-jakarta", // Crea una variabile CSS
 });
@@ -28,15 +29,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it" className={`${jakarta.variable} ${geistMono.variable} antialiased`}>
+    <html
+      lang="it"
+      className={`${jakarta.variable} ${geistMono.variable} antialiased`}
+    >
       <body className="font-sans min-h-screen flex flex-col">
-        
-        {/* Aggiungiamo un main per gestire lo spazio se necessario, 
-            ma la Navbar è fixed quindi il contenuto parte da top: 0 */}
         <main className="">
-          {children}
+          <Providers>{children}</Providers>
         </main>
-        
       </body>
     </html>
   );

@@ -1,7 +1,14 @@
 "use client";
 import { Utensils, Coffee, Beer, Pizza } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function StepType() {
+// DEFINIZIONE DELLE PROPS
+interface StepTypeProps {
+  type: string;
+  updateFields: (fields: { type: string }) => void;
+}
+
+export function StepType({ type, updateFields }: StepTypeProps) {
   const types = [
     { label: "Ristorante", icon: Utensils },
     { label: "Bar / Caffè", icon: Coffee },
@@ -17,17 +24,36 @@ export function StepType() {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        {types.map((type) => (
-          <button
-            key={type.label}
-            className="flex flex-col items-center gap-4 p-6 rounded-[2rem] border-2 border-slate-50 hover:border-red-600 hover:bg-red-50/50 transition-all group"
-          >
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-red-600 shadow-sm">
-              <type.icon size={24} />
-            </div>
-            <span className="font-bold text-slate-700">{type.label}</span>
-          </button>
-        ))}
+        {types.map((item) => {
+          const isSelected = type === item.label;
+          
+          return (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => updateFields({ type: item.label })}
+              className={cn(
+                "flex flex-col items-center gap-4 p-6 rounded-[2rem] border-2 transition-all group",
+                isSelected 
+                  ? "border-red-600 bg-red-50/50 shadow-md scale-[1.02]" 
+                  : "border-slate-50 hover:border-red-200 hover:bg-slate-50"
+              )}
+            >
+              <div className={cn(
+                "w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm transition-colors",
+                isSelected ? "bg-red-600 text-white" : "bg-white text-slate-400 group-hover:text-red-600"
+              )}>
+                <item.icon size={24} />
+              </div>
+              <span className={cn(
+                "font-bold transition-colors",
+                isSelected ? "text-red-600" : "text-slate-700"
+              )}>
+                {item.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

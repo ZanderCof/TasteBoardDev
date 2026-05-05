@@ -17,7 +17,7 @@ export const SalesChartWidget = () => (
     </div>
     
     {/* Placeholder per Recharts */}
-    <div className="h-[280px] w-full bg-gradient-to-b from-white/10 to-transparent rounded-3xl border border-dashed border-slate-300 flex items-center justify-center">
+    <div className="h-70 w-full bg-linear-to-b from-white/10 to-transparent rounded-3xl border border-dashed border-slate-300 flex items-center justify-center">
       <p className="text-slate-400 font-medium italic">Area Grafico Intelligente</p>
     </div>
   </div>

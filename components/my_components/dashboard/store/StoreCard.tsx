@@ -1,46 +1,67 @@
+// components/my_components/dashboard/store/StoreCard.tsx
 "use client";
-import { Store, MapPin, ExternalLink, Settings2 } from 'lucide-react';
-import Link from 'next/link';
+import { MapPin, ExternalLink, Settings2, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Restaurant } from "@prisma/client";
+import Image from "next/image";
 
-export const StoreCard = ({ store }: { store: any }) => {
+export const StoreCard = ({ store }: { store: Restaurant }) => {
+  // FIX: URL corretto con / e ${}
+  const placeholderImage = `https://picsum.photos/seed/${store.id}/600/400`;
+  
+  const finalImageSrc = store.logo && store.logo.startsWith("http") 
+    ? store.logo 
+    : placeholderImage;
+
   return (
-    <div className="group bg-white rounded-[2.5rem] border border-slate-100 p-6 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col justify-between h-full">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -8 }}
+      className="group bg-white rounded-[2.8rem] border border-slate-100 p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full relative overflow-hidden"
+    >
+      {/* Resto del codice identico... */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-red-50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
       <div>
-        {/* Immagine Logo / Placeholder */}
-        <div className="w-full h-40 bg-slate-50 rounded-[2rem] mb-6 overflow-hidden relative border border-slate-100">
-          <img 
-            src={store.logo || "https://picsum.photos"} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+        <div className="w-full h-44 bg-slate-100 rounded-[2.2rem] mb-6 overflow-hidden relative border border-white shadow-inner">
+          <Image
+            src={finalImageSrc}
             alt={store.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover transition-transform duration-1000 group-hover:scale-110"
           />
-          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black text-green-600 shadow-sm">
-            LIVE
+          
+          <div className="absolute top-4 left-4 flex gap-2">
+            <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black text-slate-900 shadow-sm flex items-center gap-1.5 border border-white/20 uppercase tracking-tighter">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              Attivo
+            </div>
           </div>
         </div>
 
-        <h3 className="text-xl font-black text-slate-900 mb-2 truncate">{store.name}</h3>
-        
-        <div className="space-y-3 mb-8">
-          <p className="text-slate-500 text-sm font-medium flex items-center gap-2">
-            <MapPin size={14} className="text-slate-400" />
-            {store.address || "Indirizzo non specificato"}
-          </p>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-            <ExternalLink size={12} />
-            tasteboard.io/{store.name.toLowerCase().replace(/\s+/g, '-')}
-          </p>
+        <div className="px-2 space-y-4">
+          <h3 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-red-600 transition-colors">
+            {store.name}
+          </h3>
+          <div className="flex items-center gap-3">
+             <MapPin size={14} className="text-red-500"/>
+             <p className="text-slate-500 text-sm font-bold truncate">{store.address || "Indirizzo non configurato"}</p>
+          </div>
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <Link 
+      <div className="mt-auto pt-4 border-t border-slate-50">
+        <Link
           href={`/dashboard/store/${store.id}`}
-          className="flex-1 bg-slate-900 hover:bg-red-600 text-white py-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95"
+          className="w-full bg-slate-50 hover:bg-slate-900 hover:text-white text-slate-600 py-4 rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
         >
           <Settings2 size={16} />
-          Gestisci
+          Modifica locale
         </Link>
       </div>
-    </div>
+    </motion.div>
   );
 };

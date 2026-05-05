@@ -30,41 +30,42 @@ export default function OnboardingPage() {
   };
 
   const nextStep = async () => {
-    if (currentStep === totalSteps) {
-      setIsLoading(true);
+  if (currentStep === totalSteps) {
+    setIsLoading(true);
 
-      try {
-        // Invio dei dati tramite Server Action
-        const result = await saveBusinessAction(
-          session?.user?.id as string,
-          formData
-        );
+    try {
+      const result = await saveBusinessAction(session?.user?.id as string, formData);
 
-        if (result && result.success) {
-          // 1. Aggiorniamo la sessione locale
-          await update({
-            user: {
-              ...session?.user,
-              hasBusiness: true,
-              businessName: formData.businessName,
-            },
-          });
+      if (result?.success) {
+        // 1. Notifichiamo a NextAuth che i dati sono cambiati
+        // Questo fa scattare il trigger "update" nel jwt callback
+        await update({
+          user: {
+            ...session?.user,
+            hasBusiness: true,
+            businessName: formData.businessName,
+          },
+        });
 
-          // 2. Redirect forzato con ricaricamento pagina
-          // Fondamentale per far sì che il Middleware veda i nuovi dati
-          window.location.href = "/dashboard";
-        } else {
-          alert("Errore nel salvataggio dei dati sull'Hub centrale.");
-          setIsLoading(false);
-        }
-      } catch (e) {
-        console.error("Errore di rete durante l'onboarding:", e);
+        // 2. Aspettiamo un attimo che il cookie venga scritto
+        // e poi usiamo router.push o router.refresh per evitare blocchi
+        setTimeout(() => {
+           window.location.assign("/dashboard");
+        }, 800);
+
+      } else {
+        alert("Errore nel salvataggio dei dati.");
         setIsLoading(false);
       }
-    } else {
-      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+    } catch (e) {
+      console.error(e);
+      setIsLoading(false);
     }
-  };
+  } else {
+    setCurrentStep((prev) => prev + 1);
+  }
+};
+
 
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 

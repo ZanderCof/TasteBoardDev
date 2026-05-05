@@ -1,20 +1,30 @@
 "use server";
 
-import prisma from "@/lib/prisma"; // Il prisma locale di TasteBoard
+import prisma from "@/lib/prisma";
 
 export async function saveBusinessAction(userId: string, formData: any) {
   try {
-    // 1. SALVATAGGIO SU TASTEBOARD (Database locale/Prisma Postgres)
-    // Creiamo il ristorante collegandolo all'ID dell'utente
+    // 1. SALVATAGGIO SU TASTEBOARD (Nuova Gerarchia)
     await prisma.restaurant.create({
       data: {
         userId: userId,
-        name: formData.businessName, // Assicurati che non ci sia una { dopo la virgola
+        name: formData.businessName,
         address: formData.address,
         type: formData.type,
-        categories: {
-          create: { name: "Menu Principale" },
-        },
+        // Invece di 'categories', usiamo 'menus'
+        menus: {
+          create: {
+            title: "Menu Principale",
+            isActive: true,
+            // Creiamo la categoria dentro il menu
+            categories: {
+              create: { 
+                name: "Antipasti",
+                order: 0
+              }
+            }
+          }
+        }
       },
     });
 
@@ -32,11 +42,14 @@ export async function saveBusinessAction(userId: string, formData: any) {
       },
     );
 
-    if (!res.ok) return { success: false, error: "Errore Hub" };
+    if (!res.ok) {
+      console.warn("Avviso: Hub centrale non aggiornato, ma locale OK.");
+      // Puoi decidere se ritornare comunque true o gestire l'errore
+    }
 
     return { success: true };
   } catch (error) {
     console.error("Errore salvataggio Onboarding:", error);
-    return { success: false, error: "Errore durante il salvataggio dei dati" };
+    return { success: false, error: "Errore durante la creazione del locale." };
   }
 }

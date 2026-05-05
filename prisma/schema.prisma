@@ -6,26 +6,57 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+model Reservation {
+  id           String     @id @default(cuid())
+  customerName String
+  email        String?
+  phone        String
+  date         DateTime
+  guests       Int
+  tableNumber  String?
+  status       Status     @default(PENDING)
+  notes        String?
+  restaurantId String     // <--- Obbligatorio per filtrare
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt // <--- Per tracciare modifiche
+}
 
-// Aggiungi queste tabelle per TasteBoard
+enum Status {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
 model Restaurant {
-  id           String   @id @default(cuid())
-  userId       String   @unique // Collego l'ID utente che arriva da StartingLine
+  id           String        @id @default(cuid())
+  userId       String        // Rimosso @unique se un utente può avere più locali
   name         String
   address      String?
   logo         String?
-  type         String?  // Ristorante, Pizzeria, Bar...
-  categories   Category[]
-  createdAt    DateTime @default(now())
+  type         String?
+  menus        Menu[]        // <--- Un locale ha più Menu
+  reservations Reservation[]
+  createdAt    DateTime      @default(now())
+}
+
+model Menu {
+  id           String     @id @default(cuid())
+  title        String     // Es: "Menu Estivo", "Carta dei Vini"
+  isActive     Boolean    @default(false)
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  categories   Category[] // <--- Il Menu contiene le Categorie
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model Category {
-  id           String   @id @default(cuid())
-  name         String   // Antipasti, Primi, Bevande...
-  restaurantId String
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  items        MenuItem[]
-  order        Int      @default(0) // Per ordinare le categorie nel menu
+  id        String     @id @default(cuid())
+  name      String
+  menuId    String     // <--- Collegata al Menu, non più al Restaurant
+  menu      Menu       @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  items     MenuItem[]
+  order     Int        @default(0)
 }
 
 model MenuItem {

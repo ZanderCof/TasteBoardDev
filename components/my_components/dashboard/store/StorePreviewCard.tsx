@@ -7,7 +7,7 @@ export const StorePreviewCard = () => (
     <h3 className="font-bold text-slate-400 mb-6 flex items-center justify-between text-sm">
       Anteprima Mobile <ExternalLink size={16} />
     </h3>
-    <div className="aspect-[9/16] bg-white/5 rounded-[2rem] border border-white/10 flex flex-col items-center justify-center gap-6 p-4">
+    <div className="aspect-9/16 bg-white/5 rounded-[2rem] border border-white/10 flex flex-col items-center justify-center gap-6 p-4">
       <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
         <Globe size={32} className="text-brand-red" />
       </div>

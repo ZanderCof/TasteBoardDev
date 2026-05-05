@@ -24,6 +24,7 @@ export function LoginForm() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
+    // Eseguiamo il login
     const result = await signIn("credentials", {
       email,
       password,
@@ -34,7 +35,8 @@ export function LoginForm() {
       setError("Credenziali errate o abbonamento non attivo.");
       setLoading(false);
     } else {
-      router.push("/dashboard");
+      // Usiamo replace per non permettere di tornare indietro col tasto del browser
+      router.replace("/dashboard");
       router.refresh();
     }
   }
@@ -57,14 +59,14 @@ export function LoginForm() {
               type="email"
               required
               placeholder="nome@mail.it"
-              className="h-12 border-slate-200"
+              className="h-12 border-slate-200 focus:border-red-600 focus:ring-red-600"
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <Label htmlFor="password">Password</Label>
-              <Link href="https://vercel.app" className="text-xs font-bold text-red-600 hover:underline">
+              <Link href="#" className="text-xs font-bold text-red-600 hover:underline">
                 Dimenticata?
               </Link>
             </div>
@@ -73,7 +75,7 @@ export function LoginForm() {
               name="password"
               type="password"
               required
-              className="h-12 border-slate-200"
+              className="h-12 border-slate-200 focus:border-red-600 focus:ring-red-600"
             />
           </div>
         </div>
@@ -81,15 +83,15 @@ export function LoginForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-bold text-lg rounded-xl"
+          className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-bold text-lg rounded-xl transition-all active:scale-[0.98]"
         >
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Accedi"}
+          {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Accedi"}
         </Button>
       </form>
 
       <p className="text-center text-sm text-slate-500">
-        Non hai un account StartingLine?{" "}
-        <Link href="https://startingline-gamma.vercel.app/register" className="text-red-600 font-bold hover:underline">
+        Non hai un account?{" "}
+        <Link href="/register" className="text-red-600 font-bold hover:underline">
           Registrati
         </Link>
       </p>

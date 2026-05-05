@@ -1,6 +1,6 @@
 // components/my_components/dashboard/store/StoreCard.tsx
 "use client";
-import { MapPin, ExternalLink, Settings2, ArrowUpRight } from "lucide-react";
+import { MapPin, Settings2, } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Restaurant } from "@prisma/client";

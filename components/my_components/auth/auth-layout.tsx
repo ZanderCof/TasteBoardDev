@@ -3,7 +3,7 @@ export function AuthLayout({ children, title, subtitle }: { children: React.Reac
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* LATO SINISTRO: Form */}
       <div className="flex items-center justify-center p-8 bg-white">
-        <div className="w-full max-w-[400px] space-y-8">
+        <div className="w-full max-w-400px space-y-8">
           <div className="flex flex-col items-center lg:items-start gap-2">
             <h1 className="text-3xl font-extrabold text-slate-900">{title}</h1>
             <p className="text-slate-500 font-medium">{subtitle}</p>

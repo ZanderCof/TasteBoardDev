@@ -1,31 +1,42 @@
 "use client";
 import { PlusCircle, GripVertical, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useMenuStore } from "@/app/(account)/(dashboard)/dashboard/menu/create/useMenuStore";
 
-interface CategorySidebarProps {
-  categories: string[];
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-}
 
-export function CategorySidebar({ categories, activeTab, setActiveTab }: CategorySidebarProps) {
+export function CategorySidebar() {
+  // Prendiamo i dati e le funzioni direttamente dallo store
+  const { categories, activeCategoryId, setActiveCategory, addCategory } = useMenuStore();
+
+  const handleAddCategory = () => {
+    const name = prompt("Nome della nuova categoria:"); // Poi lo sostituiremo con un modale Shadcn
+    if (name) addCategory(name);
+  };
+
   return (
     <aside className="space-y-4 sticky top-32">
       <div className="bg-white/70 backdrop-blur-2xl rounded-[3rem] p-8 border border-white shadow-2xl shadow-slate-200/40">
         <div className="flex items-center justify-between mb-8 px-2">
-          <h2 className="font-black text-slate-900 text-xl tracking-tight italic underline decoration-red-600">Sezioni</h2>
-          <button className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm">
+          <h2 className="font-black text-slate-900 text-xl tracking-tight italic underline decoration-red-600">
+            Sezioni
+          </h2>
+          <button 
+            onClick={handleAddCategory}
+            className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
+          >
             <PlusCircle size={20} />
           </button>
         </div>
         
         <div className="space-y-3">
           {categories.map((cat) => {
-            const isActive = activeTab === cat;
+            // Verifichiamo l'attivazione tramite ID
+            const isActive = activeCategoryId === cat.id;
+            
             return (
               <button
-                key={cat}
-                onClick={() => setActiveTab(cat)}
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
                 className={cn(
                   "w-full flex items-center justify-between p-5 rounded-[1.8rem] border-2 transition-all duration-300 font-bold text-sm group",
                   isActive 
@@ -34,10 +45,16 @@ export function CategorySidebar({ categories, activeTab, setActiveTab }: Categor
                 )}
               >
                 <div className="flex items-center gap-4">
-                  <div className={cn("w-1.5 h-6 rounded-full transition-all", isActive ? "bg-red-600" : "bg-slate-200 group-hover:bg-red-300")} />
-                  {cat}
+                  <div className={cn(
+                    "w-1.5 h-6 rounded-full transition-all", 
+                    isActive ? "bg-red-600" : "bg-slate-200 group-hover:bg-red-300"
+                  )} />
+                  {cat.name}
                 </div>
-                <GripVertical size={16} className={cn("opacity-20", isActive ? "text-red-600 opacity-60" : "text-slate-400")} />
+                <GripVertical size={16} className={cn(
+                  "opacity-20", 
+                  isActive ? "text-red-600 opacity-60" : "text-slate-400"
+                )} />
               </button>
             );
           })}

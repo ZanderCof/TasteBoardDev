@@ -14,12 +14,12 @@ export async function saveBusinessAction(userId: string, formData: any) {
         // Invece di 'categories', usiamo 'menus'
         menus: {
           create: {
-            title: "Menu Principale",
-            isActive: true,
+            name: "Menu di test",
+            isPublished: true,
             // Creiamo la categoria dentro il menu
             categories: {
               create: { 
-                name: "Antipasti",
+                name: "Categoria di test",
                 order: 0
               }
             }

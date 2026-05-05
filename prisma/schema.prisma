@@ -41,31 +41,29 @@ model Restaurant {
 
 model Menu {
   id           String     @id @default(cuid())
-  title        String     // Es: "Menu Estivo", "Carta dei Vini"
-  isActive     Boolean    @default(false)
+  name         String
+  isPublished  Boolean    @default(false)
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  categories   Category[] // <--- Il Menu contiene le Categorie
+  categories   Category[]
   createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
 }
 
 model Category {
-  id        String     @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
-  menuId    String     // <--- Collegata al Menu, non più al Restaurant
-  menu      Menu       @relation(fields: [menuId], references: [id], onDelete: Cascade)
-  items     MenuItem[]
-  order     Int        @default(0)
+  order     Int      @default(0)
+  menuId    String
+  menu      Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  dishes    Dish[]
 }
 
-model MenuItem {
+model Dish {
   id          String   @id @default(cuid())
   name        String
   description String?
-  price       Decimal  @db.Decimal(10, 2)
+  price       Decimal
   image       String?
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  available   Boolean  @default(true)
 }

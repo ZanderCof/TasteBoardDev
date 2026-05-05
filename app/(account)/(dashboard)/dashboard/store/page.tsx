@@ -1,6 +1,5 @@
 // app/(account)/(dashboard)/dashboard/store/page.tsx
 import React from "react";
-import { Plus } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";

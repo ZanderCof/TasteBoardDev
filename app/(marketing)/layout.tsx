@@ -35,7 +35,7 @@ export default function RootLayout({
       <Navbar />
       {/* Aggiungiamo un main per gestire lo spazio se necessario, 
             ma la Navbar è fixed quindi il contenuto parte da top: 0 */}
-      <main className="flex-grow">
+      <main className="grow mt-20">
         {children}
         <FloatingBot />
       </main>

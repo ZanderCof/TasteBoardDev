@@ -1,46 +1,48 @@
-import React from "react";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 import prisma from "@/lib/prisma";
-import { auth } from "@/auth"; // Importa auth per recuperare la sessione
+import { auth } from "@/auth"; 
 import MenuListCard from "@/components/my_components/dashboard/menu/MenuListCard";
 import CreateMenuCard from "@/components/my_components/dashboard/menu/CreateMenuCard";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { redirect } from "next/navigation";
 
-export default async function MenuListPage() {
-  // 1. Recuperiamo la sessione dell'utente loggato
+// Aggiungiamo searchParams per leggere l'ID dall'URL
+export default async function MenuListPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ restaurantId?: string }> 
+}) {
   const session = await auth();
+  if (!session?.user?.id) redirect("/login");
 
-  // 2. Protezione: se non c'è sessione, rimandiamo al login
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
+  const resolvedSearchParams = await searchParams;
+  const urlRestaurantId = resolvedSearchParams.restaurantId;
 
-  // 3. Query FILTRATA: prendiamo solo i menu del ristorante collegato all'userId
+  // 1. Cerchiamo il ristorante (quello dell'URL o il primo disponibile)
+  const restaurant = await prisma.restaurant.findFirst({
+    where: { 
+      userId: session.user.id,
+      ...(urlRestaurantId ? { id: urlRestaurantId } : {}) // Se c'è l'ID nell'URL, prendi quello
+    },
+    orderBy: { createdAt: 'asc' } // Prende il più vecchio (il primo creato) come default
+  });
+
+  if (!restaurant) redirect("/onboarding");
+
+  // 2. Query filtrata SOLO per quel ristorante specifico
   const menusFromDb = await prisma.menu.findMany({
     where: {
-      restaurant: {
-        userId: session.user.id, // Filtra per l'ID dell'utente loggato
-      },
+      restaurantId: restaurant.id, // Filtro diretto per ID Ristorante
     },
     include: {
-      _count: {
-        select: { categories: true },
-      },
+      _count: { select: { categories: true } },
       categories: {
-        include: {
-          _count: {
-            select: { dishes: true },
-          },
-        },
+        include: { _count: { select: { dishes: true } } },
       },
     },
     orderBy: { createdAt: "desc" },
   });
 
-  // 4. Mappiamo i dati per la UI
   const menus = menusFromDb.map((m) => ({
     id: m.id,
     title: m.name || "Menu senza nome",
@@ -54,27 +56,24 @@ export default async function MenuListPage() {
     <div className="space-y-8 font-jakarta">
       <header className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 uppercase">
-            Gestione <span className="text-red-600">Menu</span>
+          <h1 className="text-3xl font-black text-slate-900 uppercase italic">
+            Menu <span className="text-red-600">{restaurant.name}</span>
           </h1>
           <p className="text-slate-500 font-medium">
-            Crea e gestisci i listini per i tuoi locali.
+            Gestione listini per questo locale.
           </p>
         </div>
-        <Link href="/dashboard/menu/create">
-          <div className="bg-red-600 text-white px-6 py-3 rounded-2xl font-bold hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer">
-            <Plus size={20} /> Nuovo Menu
-          </div>
-        </Link>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        <CreateMenuCard />
+        {/* Passiamo l'ID del ristorante alla card di creazione */}
+        <CreateMenuCard restaurantId={restaurant.id} />
 
         {menus.length > 0 ? (
           menus.map((menu) => (
             <MenuListCard
               key={menu.id}
+              id={menu.id}
               title={menu.title}
               dishesCount={menu.dishesCount}
               categoriesCount={menu.categoriesCount}
@@ -83,9 +82,11 @@ export default async function MenuListPage() {
             />
           ))
         ) : (
-          <p className="col-span-full text-slate-400 text-sm italic">
-            Non ci sono ancora menu caricati per il tuo locale.
-          </p>
+          <div className="col-span-full py-20 text-center bg-white rounded-[2rem] border border-dashed border-slate-200">
+             <p className="text-slate-400 font-bold uppercase tracking-widest text-sm">
+               Nessun menu creato per questo ristorante
+             </p>
+          </div>
         )}
       </div>
     </div>

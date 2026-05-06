@@ -30,48 +30,44 @@ export default function OnboardingPage() {
   };
 
   const nextStep = async () => {
-  if (currentStep === totalSteps) {
-    setIsLoading(true);
+    if (currentStep === totalSteps) {
+      setIsLoading(true);
 
-    try {
-      const result = await saveBusinessAction(session?.user?.id as string, formData);
+      try {
+        // Chiamata all'action con i due parametri corretti: ID e Dati
+        const result = await saveBusinessAction(session?.user?.id as string, formData);
 
-      if (result?.success) {
-        // 1. Notifichiamo a NextAuth che i dati sono cambiati
-        // Questo fa scattare il trigger "update" nel jwt callback
-        await update({
-          user: {
-            ...session?.user,
-            hasBusiness: true,
-            businessName: formData.businessName,
-          },
-        });
+        if (result?.success) {
+          // Aggiorniamo la sessione lato client per riflettere lo stato "hasBusiness"
+          await update({
+            ...session,
+            user: {
+              ...session?.user,
+              hasBusiness: true,
+            },
+          });
 
-        // 2. Aspettiamo un attimo che il cookie venga scritto
-        // e poi usiamo router.push o router.refresh per evitare blocchi
-        setTimeout(() => {
-           window.location.assign("/dashboard");
-        }, 800);
-
-      } else {
-        alert("Errore nel salvataggio dei dati.");
+          // Redirect forzato a livello di window per "pulire" lo stato dell'app
+          window.location.assign("/dashboard/menu");
+        } else {
+          alert(result?.error || "Errore nel salvataggio.");
+          setIsLoading(false);
+        }
+      } catch (e) {
+        console.error("Errore critico onboarding:", e);
         setIsLoading(false);
       }
-    } catch (e) {
-      console.error(e);
-      setIsLoading(false);
+    } else {
+      setCurrentStep((prev) => prev + 1);
     }
-  } else {
-    setCurrentStep((prev) => prev + 1);
-  }
-};
-
+  };
 
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12">
+    <div className="min-h-screen bg-slate-50 py-12 px-4">
       <OnboardingWrapper step={currentStep} totalSteps={totalSteps}>
+        
         {currentStep === 1 && (
           <StepInfo
             businessName={formData.businessName}
@@ -86,15 +82,15 @@ export default function OnboardingPage() {
 
         {currentStep === 3 && (
           <div className="text-center py-8 space-y-4">
-            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
               <Loader2 className="text-yellow-600 animate-spin" size={40} />
             </div>
             <h2 className="text-3xl font-black mb-4 tracking-tight text-slate-900">
               Quasi pronto!
             </h2>
-            <p className="text-slate-500 font-medium leading-relaxed">
-              Stiamo configurando lo spazio per{" "}
-              <strong>{formData.businessName}</strong>.
+            <p className="text-slate-500 font-medium leading-relaxed max-w-sm mx-auto">
+              Stiamo configurando lo spazio digitale per{" "}
+              <span className="text-slate-900 font-bold">{formData.businessName || "il tuo locale"}</span>.
             </p>
           </div>
         )}
@@ -114,28 +110,22 @@ export default function OnboardingPage() {
 
           <Button
             onClick={nextStep}
-            disabled={
-              isLoading || (currentStep === 1 && !formData.businessName)
-            }
-            className={`h-14 rounded-2xl font-bold shadow-lg transition-all duration-300
+            disabled={isLoading || (currentStep === 1 && !formData.businessName)}
+            className={`h-14 rounded-2xl font-bold shadow-lg transition-all duration-500 flex-1
               ${
                 currentStep === totalSteps
-                  ? "bg-slate-900 hover:bg-slate-800 text-white flex-1"
-                  : "bg-red-600 hover:bg-red-700 text-white flex-1 shadow-red-200"
+                  ? "bg-slate-900 hover:bg-black text-white"
+                  : "bg-red-600 hover:bg-red-700 text-white shadow-red-200"
               }`}
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <Loader2 className="animate-spin" size={20} /> Salvataggio...
+                <Loader2 className="animate-spin" size={20} /> Configurazione in corso...
               </span>
             ) : (
               <>
-                {currentStep === totalSteps
-                  ? "Configurazione completata"
-                  : "Continua"}
-                {currentStep !== totalSteps && (
-                  <ArrowRight size={18} className="ml-2" />
-                )}
+                {currentStep === totalSteps ? "Concludi e inizia" : "Continua"}
+                {currentStep !== totalSteps && <ArrowRight size={18} className="ml-2" />}
               </>
             )}
           </Button>

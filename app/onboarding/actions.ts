@@ -1,25 +1,44 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { auth } from "@/auth";
+import { revalidatePath } from "next/cache";
 
-export async function saveBusinessAction(userId: string, formData: any) {
+// Definiamo il tipo dell'oggetto che arriva dal client
+interface OnboardingData {
+  businessName: string;
+  address: string;
+  type: string;
+  logo: string;
+}
+
+export async function saveBusinessAction(userId: string, data: OnboardingData) {
+  const session = await auth();
+  
+  if (!session?.user?.id || session.user.id !== userId) {
+    return { success: false, error: "Non autorizzato" };
+  }
+
+  if (!data.businessName) {
+    return { success: false, error: "Il nome del locale è obbligatorio." };
+  }
+
   try {
-    // 1. SALVATAGGIO SU TASTEBOARD (Nuova Gerarchia)
-    await prisma.restaurant.create({
+    // 1. SALVATAGGIO SU TASTEBOARD
+    const newRestaurant = await prisma.restaurant.create({
       data: {
         userId: userId,
-        name: formData.businessName,
-        address: formData.address,
-        type: formData.type,
-        // Invece di 'categories', usiamo 'menus'
+        name: data.businessName,
+        address: data.address || null,
+        type: data.type || null,
+        logo: data.logo || null, // Se vuoi salvare il base64
         menus: {
           create: {
-            name: "Menu di test",
+            name: "Menu Principale",
             isPublished: true,
-            // Creiamo la categoria dentro il menu
             categories: {
               create: { 
-                name: "Categoria di test",
+                name: "Antipasti",
                 order: 0
               }
             }
@@ -28,28 +47,26 @@ export async function saveBusinessAction(userId: string, formData: any) {
       },
     });
 
-    // 2. SALVATAGGIO SU STARTINGLINE (Hub centrale)
-    const res = await fetch(
-      "http://localhost:3001/api/external/update-business",
-      {
+    // 2. Sincronizzazione Hub (StartingLine)
+    try {
+      await fetch("http://localhost:3001/api/external/update-business", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId,
-          businessName: formData.businessName,
+          businessName: data.businessName,
           secret: process.env.INTERNAL_API_SECRET,
         }),
-      },
-    );
-
-    if (!res.ok) {
-      console.warn("Avviso: Hub centrale non aggiornato, ma locale OK.");
-      // Puoi decidere se ritornare comunque true o gestire l'errore
+      });
+    } catch (e) {
+      console.error("Hub non raggiungibile");
     }
 
+    revalidatePath("/dashboard");
     return { success: true };
+    
   } catch (error) {
-    console.error("Errore salvataggio Onboarding:", error);
-    return { success: false, error: "Errore durante la creazione del locale." };
+    console.error("Errore Prisma:", error);
+    return { success: false, error: "Errore durante la creazione." };
   }
 }

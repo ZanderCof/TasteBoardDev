@@ -12,8 +12,7 @@ import { Euro, ShoppingBag, Users, Star } from "lucide-react";
 export default function DashboardPage() {
   return (
     <div className="px-6 lg:px-8 py-6 space-y-8">
-      {/* TOPBAR */}
-      <Topbar />
+
       {/* HEADER */}
       <header className="space-y-1">
         <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">

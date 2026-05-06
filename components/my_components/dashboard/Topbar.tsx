@@ -3,7 +3,14 @@
 import { Bell, Search, Command } from "lucide-react";
 import StoreSwitcher from "./StoreSwitcher";
 
-export default function Topbar() {
+
+interface Restaurant {
+  id: string;
+  name: string;
+  type: string | null;
+}
+export default function Topbar({ initialStores }: { initialStores: Restaurant[] }) {
+
   return (
     <header className="sticky z-40 h-22 bg-white/60 backdrop-blur-xl border border-white/80 rounded-[2.5rem] px-6 flex items-center justify-between shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all">
       
@@ -37,7 +44,7 @@ export default function Topbar() {
 
         <div className="h-8 w-px bg-slate-200 mx-3 opacity-50" />
         
-        <StoreSwitcher />
+        <StoreSwitcher initialStores={initialStores} />
       </div>
     </header>
   );

@@ -9,10 +9,18 @@ import { motion, AnimatePresence } from "framer-motion";
 interface StepInfoProps {
   businessName: string;
   address: string;
-  updateFields: (fields: { businessName?: string; address?: string; logo?: string }) => void;
+  updateFields: (fields: {
+    businessName?: string;
+    address?: string;
+    logo?: string;
+  }) => void;
 }
 
-export function StepInfo({ businessName, address, updateFields }: StepInfoProps) {
+export function StepInfo({
+  businessName,
+  address,
+  updateFields,
+}: StepInfoProps) {
   const [image, setImage] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +42,9 @@ export function StepInfo({ businessName, address, updateFields }: StepInfoProps)
         <h2 className="text-3xl font-black text-slate-900 tracking-tight">
           Benvenuto su <span className="text-red-600">Tasteboard</span>
         </h2>
-        <p className="text-slate-500">Iniziamo con le informazioni base del tuo locale.</p>
+        <p className="text-slate-500">
+          Iniziamo con le informazioni base del tuo locale.
+        </p>
       </div>
 
       {/* UPLOAD LOGO */}
@@ -60,7 +70,9 @@ export function StepInfo({ businessName, address, updateFields }: StepInfoProps)
                   className="flex flex-col items-center text-slate-400 group-hover:text-red-500"
                 >
                   <Camera size={28} strokeWidth={1.5} />
-                  <span className="text-[10px] font-bold uppercase mt-2">Aggiungi Logo</span>
+                  <span className="text-[10px] font-bold uppercase mt-2">
+                    Aggiungi Logo
+                  </span>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -92,23 +104,29 @@ export function StepInfo({ businessName, address, updateFields }: StepInfoProps)
 
       <div className="grid gap-6">
         <div className="space-y-2">
-          <Label htmlFor="restaurantName" className="font-bold text-slate-700">Nome del Locale</Label>
-          <Input 
-            id="restaurantName" 
-            value={businessName} // Valore collegato al padre
-            onChange={(e) => updateFields({ businessName: e.target.value })} // Aggiorna il padre
-            placeholder="es. Pizzeria da Mario" 
-            className="h-12 rounded-xl border-slate-200 focus:ring-red-500 focus:border-red-500" 
+          <Label htmlFor="restaurantName" className="font-bold text-slate-700">
+            Nome del Locale
+          </Label>
+          <Input
+            id="restaurantName"
+            name="businessName" // <--- AGGIUNGI QUESTO
+            value={businessName}
+            onChange={(e) => updateFields({ businessName: e.target.value })}
+            placeholder="es. Pizzeria da Mario"
+            className="h-12 rounded-xl border-slate-200 focus:ring-red-500 focus:border-red-500"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="address" className="font-bold text-slate-700">Indirizzo</Label>
-          <Input 
-            id="address" 
-            value={address} // Valore collegato al padre
-            onChange={(e) => updateFields({ address: e.target.value })} // Aggiorna il padre
-            placeholder="Via Roma 1, Milano" 
-            className="h-12 rounded-xl border-slate-200 focus:ring-red-500 focus:border-red-500" 
+          <Label htmlFor="address" className="font-bold text-slate-700">
+            Indirizzo
+          </Label>
+          <Input
+            id="address"
+            name="address" // <--- AGGIUNGI QUESTO
+            value={address}
+            onChange={(e) => updateFields({ address: e.target.value })}
+            placeholder="Via Roma 1, Milano"
+            className="h-12 rounded-xl border-slate-200 focus:ring-red-500 focus:border-red-500"
           />
         </div>
       </div>

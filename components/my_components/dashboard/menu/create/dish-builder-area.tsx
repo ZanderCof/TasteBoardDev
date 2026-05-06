@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PlusCircle, Utensils, Trash2 } from "lucide-react";
+import { Plus, Utensils, Trash2, Edit3, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AddDishModal } from "./AddDishModal";
 import { useMenuStore } from "@/app/(account)/(dashboard)/dashboard/menu/create/useMenuStore";
@@ -17,8 +17,8 @@ export function DishBuilderArea() {
 
   const handleRemoveDish = (dishId: string, dishName: string) => {
     removeDish(activeCategory.id, dishId);
-    toast.info(`Piatto rimosso`, {
-      description: `${dishName} è stato rimosso dalla lista.`
+    toast.error(`Piatto rimosso`, {
+      description: `${dishName} non è più nel menu.`,
     });
   };
 
@@ -27,77 +27,110 @@ export function DishBuilderArea() {
       <AnimatePresence mode="wait">
         <motion.div
           key={activeCategory.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="bg-white/60 backdrop-blur-xl rounded-[3.5rem] border border-white p-10 min-h-650px shadow-2xl shadow-slate-200/40 relative"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          className="bg-white rounded-[3rem] border border-slate-100 p-8 md:p-12 min-h-150 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.04)] relative overflow-hidden"
         >
-          <div className="flex items-center justify-between mb-12">
+          {/* Sfondo Decorativo */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-red-50/30 blur-[120px] rounded-full -mr-48 -mt-48 pointer-events-none" />
+
+          {/* HEADER SEZIONE */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-12 gap-6 relative z-10">
             <div>
-              <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="px-3 py-1 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-lg shadow-red-100">
+                  Sezione Attiva
+                </span>
+              </div>
+              <h2 className="text-4xl font-bold text-slate-900 tracking-tight">
                 {activeCategory.name}
               </h2>
-              <p className="text-slate-400 font-medium mt-1 uppercase text-[10px] tracking-widest">
-                {activeCategory.dishes.length} {activeCategory.dishes.length === 1 ? 'portata' : 'portate'} disponibili
+              <p className="text-slate-400 font-medium mt-2 flex items-center gap-2">
+                <Utensils size={14} />
+                {activeCategory.dishes.length} portate in questa categoria
               </p>
             </div>
             
             <Button 
               onClick={() => setIsModalOpen(true)}
-              className="bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold h-12 px-6 shadow-lg shadow-red-100 gap-2 transition-all active:scale-95"
+              className="bg-slate-900 hover:bg-red-600 text-white rounded-2xl font-bold h-14 px-8 shadow-xl shadow-slate-200 gap-3 transition-all active:scale-95 grow sm:grow-0"
             >
-              <PlusCircle size={20} /> Aggiungi Piatto
+              <Plus size={20} strokeWidth={3} /> Aggiungi Piatto
             </Button>
           </div>
 
+          {/* LISTA PIATTI */}
           {activeCategory.dishes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {activeCategory.dishes.map((dish) => (
-                <motion.div 
-                  layout 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  key={dish.id} 
-                  className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm flex justify-between items-center group hover:border-yellow-400 transition-all duration-300"
-                >
-                  <div className="space-y-1">
-                    <h4 className="font-bold text-slate-900 leading-tight">{dish.name}</h4>
-                    <p className="text-red-600 font-black text-sm tracking-tighter">
-                       €{parseFloat(dish.price.toString().replace(',', '.')).toFixed(2)}
-                    </p>
-                  </div>
-                  
-                  <button 
-                    onClick={() => handleRemoveDish(dish.id, dish.name)}
-                    className="opacity-0 group-hover:opacity-100 p-2.5 bg-red-50 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-xl transition-all duration-200"
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 relative z-10">
+              <AnimatePresence>
+                {activeCategory.dishes.map((dish) => (
+                  <motion.div 
+                    layout 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    key={dish.id} 
+                    className="p-5 bg-slate-50/50 hover:bg-white border border-transparent hover:border-red-100 rounded-[2rem] shadow-sm hover:shadow-xl hover:shadow-red-500/5 flex justify-between items-center group transition-all duration-300"
                   >
-                    <Trash2 size={18} />
-                  </button>
-                </motion.div>
-              ))}
+                    <div className="flex items-center gap-4">
+                      <div className="hidden sm:flex p-2 bg-white rounded-xl border border-slate-100 text-slate-300">
+                        <GripVertical size={16} />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-slate-900 leading-tight text-lg">{dish.name}</h4>
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-600 font-bold text-base">
+                            €{parseFloat(dish.price.toString()).toFixed(2)}
+                          </span>
+                          {dish.description && (
+                            <span className="text-[10px] text-slate-400 font-medium truncate max-w-37.5">
+                              • {dish.description}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <button className="opacity-0 group-hover:opacity-100 p-2.5 text-slate-400 hover:text-slate-900 transition-all">
+                        <Edit3 size={18} />
+                      </button>
+                      <button 
+                        onClick={() => handleRemoveDish(dish.id, dish.name)}
+                        className="opacity-0 group-hover:opacity-100 p-2.5 bg-white text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl shadow-sm transition-all duration-200"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-28 bg-slate-50/50 rounded-[3rem] border-2 border-dashed border-slate-100">
-              <div className="relative mb-8">
-                <div className="absolute inset-0 bg-red-100 rounded-full blur-2xl opacity-50" />
-                <div className="relative w-24 h-24 bg-white rounded-full shadow-inner flex items-center justify-center text-slate-200">
-                  <Utensils size={48} />
+            /* EMPTY STATE */
+            <div className="flex flex-col items-center justify-center py-24 bg-slate-50/30 rounded-[3rem] border-2 border-dashed border-slate-100">
+              <motion.div 
+                animate={{ y: [0, -10, 0] }} 
+                transition={{ repeat: Infinity, duration: 3 }}
+                className="relative mb-8"
+              >
+                <div className="absolute inset-0 bg-red-200 rounded-full blur-3xl opacity-30" />
+                <div className="relative w-28 h-28 bg-white rounded-[2.5rem] shadow-xl flex items-center justify-center text-slate-200 border border-slate-50">
+                  <Utensils size={40} className="text-slate-100" />
                 </div>
-              </div>
-              <h3 className="text-2xl font-black text-slate-800 tracking-tight">
-                Vuoto come un piatto pulito
-              </h3>
-              <p className="text-slate-400 text-center max-w-[320px] mt-3 mb-10 font-medium leading-relaxed">
-                Inizia a creare il tuo capolavoro culinario per la sezione{" "}
-                <span className="text-red-600 font-bold">{activeCategory.name}</span>.
+              </motion.div>
+              <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Ancora nulla nel piatto?</h3>
+              <p className="text-slate-500 text-center max-w-75 mt-3 mb-10 font-medium leading-relaxed">
+                Inizia ad aggiungere le tue specialità per la sezione <span className="text-red-600 font-bold">{activeCategory.name}</span>.
               </p>
               
               <Button
-                onClick={() => setIsModalOpen(true)} // SISTEMATO: Prima era setIsOpen
+                onClick={() => setIsModalOpen(true)}
                 size="lg"
-                className="bg-slate-900 hover:bg-red-600 text-white px-10 h-14 rounded-2xl font-black shadow-xl shadow-slate-200 transition-all active:scale-95"
+                className="bg-red-600 hover:bg-red-700 text-white px-12 h-16 rounded-[1.5rem] font-bold shadow-2xl shadow-red-100 transition-all active:scale-95"
               >
-                Aggiungi la prima portata
+                Crea la prima portata
               </Button>
             </div>
           )}

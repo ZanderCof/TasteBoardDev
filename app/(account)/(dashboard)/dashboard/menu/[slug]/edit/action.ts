@@ -30,8 +30,24 @@ export async function deleteMenu(menuId: string) {
 
 /* --- CATEGORIE --- */
 export async function addCategory(menuId: string, name: string) {
+  // Recuperiamo l'ultimo ordine per mettere la nuova categoria in fondo
+  const lastCategory = await prisma.category.findFirst({
+    where: { menuId },
+    orderBy: { order: "desc" },
+  });
+  const newOrder = lastCategory ? lastCategory.order + 1 : 0;
+
   await prisma.category.create({
-    data: { name, menuId, order: 99 }
+    data: { name, menuId, order: newOrder }
+  });
+  revalidatePath(`/dashboard/menu/${menuId}/edit`);
+}
+
+// AGGIUNTA: Necessaria per l'editing inline della categoria
+export async function updateCategoryName(id: string, name: string, menuId: string) {
+  await prisma.category.update({
+    where: { id },
+    data: { name }
   });
   revalidatePath(`/dashboard/menu/${menuId}/edit`);
 }
@@ -47,16 +63,14 @@ export async function addDish(
   menuId: string, 
   data: { 
     name: string; 
-    price: string | number; // Sostituito 'any' con tipi specifici
+    price: string | number; 
     description?: string 
   }
 ) {
-  // Conversione sicura: se è stringa puliamo virgole, altrimenti convertiamo in numero
   const cleanPrice = typeof data.price === "string" 
     ? parseFloat(data.price.replace(",", ".")) 
     : Number(data.price);
 
-  // Se il valore ottenuto non è un numero valido (NaN), salviamo 0
   const finalPrice = isNaN(cleanPrice) ? 0 : cleanPrice;
 
   await prisma.dish.create({
@@ -64,9 +78,7 @@ export async function addDish(
       name: data.name,
       price: finalPrice,
       description: data.description || null,
-      category: {
-        connect: { id: categoryId }
-      }
+      categoryId: categoryId // Più diretto dell'uso di connect
     }
   });
 

@@ -4,8 +4,6 @@ import { DishBuilderArea } from "@/components/my_components/dashboard/menu/creat
 import { MenuBuilderHeader } from "@/components/my_components/dashboard/menu/create/menu-builder-header";
 
 export default function CreateMenuPage() {
-  // Non serve più useState('Antipasti') qui!
-  // I componenti leggono e scrivono tutto nello store.
 
   return (
     <div className="space-y-10 max-w-375 mx-auto pb-20">

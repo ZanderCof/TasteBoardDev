@@ -26,7 +26,7 @@ export async function createMenuAction(data: {
       await tx.menu.create({
         data: {
           name: data.name,
-          restaurantId: restaurant.id, // <--- ORA È DINAMICO!
+          restaurantId: restaurant.id,
           isPublished: true,
           categories: {
             create: data.categories.map((cat) => ({

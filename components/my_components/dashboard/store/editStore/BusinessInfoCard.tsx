@@ -1,99 +1,147 @@
 "use client";
 import React from 'react';
-import { MapPin, Hash, Building, Phone, Trash2, AlertCircle } from 'lucide-react';
+import { MapPin, Hash, Building, Phone, Utensils, Coffee, Pizza, Beer, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { cn } from "@/lib/utils";
+
+const categories = [
+  { id: "RESTAURANT", label: "Ristorante", icon: Utensils, color: "text-orange-500", bg: "bg-orange-50" },
+  { id: "BAR", label: "Bar/Café", icon: Coffee, color: "text-blue-500", bg: "bg-blue-50" },
+  { id: "PIZZERIA", label: "Pizzeria", icon: Pizza, color: "text-red-500", bg: "bg-red-50" },
+  { id: "PUB", label: "Pub/Birreria", icon: Beer, color: "text-yellow-600", bg: "bg-yellow-50" },
+];
 
 interface BusinessInfoProps {
   address: string;
   piva: string;
   phone: string;
-  onUpdate: (fields: { address?: string; piva?: string; phone?: string }) => void;
-  onDelete?: () => void; // Aggiunta funzione delete
+  type: string;
+  isLive: boolean;
+  onUpdate: (fields: { address?: string; piva?: string; phone?: string; type?: string; isLive?: boolean }) => void;
 }
 
-export const BusinessInfoCard = ({ address, piva, phone, onUpdate, onDelete }: BusinessInfoProps) => (
-  <div className="space-y-6">
-    <section className="bg-white/80 backdrop-blur-xl border border-white rounded-[2.5rem] p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] font-jakarta relative overflow-hidden">
-      {/* Intestazione */}
-      <div className="flex items-center justify-between mb-10">
-        <div className="flex items-center gap-5">
+export const BusinessInfoCard = ({ address, piva, phone, type, isLive, onUpdate }: BusinessInfoProps) => {
+  return (
+    <motion.section 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-[2.5rem] p-8 md:p-10 border border-slate-100 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.03)] font-jakarta relative overflow-hidden"
+    >
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6 relative z-10">
+        <div className="flex items-center gap-6">
           <div className="p-4 bg-slate-900 rounded-[1.5rem] text-white shadow-xl shadow-slate-200">
-            <Building size={24} />
+            <Building size={26} strokeWidth={2} />
           </div>
           <div>
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-1.5">Informazioni Aziendali</h2>
-            <p className="text-sm text-slate-500 font-medium">Gestisci i recapiti e i dati legali della tua attività</p>
+            <h2 className="text-3xl font-bold text-slate-900 tracking-tight mb-1.5">Identità & Visibilità</h2>
+            <p className="text-sm text-slate-400 font-medium">Gestisci come il tuo locale appare nel mondo digitale</p>
           </div>
+        </div>
+
+        {/* TOGGLE STATO LIVE/MANUTENZIONE */}
+        <div className="flex items-center p-1.5 bg-slate-50 border border-slate-100 rounded-[1.4rem]">
+          <button
+            onClick={() => onUpdate({ isLive: true })}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+              isLive ? "bg-white text-emerald-600 shadow-sm border border-slate-100" : "text-slate-400 hover:text-slate-600"
+            )}
+          >
+            <Eye size={14} /> Live
+          </button>
+          <button
+            onClick={() => onUpdate({ isLive: false })}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+              !isLive ? "bg-white text-amber-600 shadow-sm border border-slate-100" : "text-slate-400 hover:text-slate-600"
+            )}
+          >
+            <EyeOff size={14} /> Off
+          </button>
         </div>
       </div>
 
-      {/* Grid Campi */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-3">
-          <label className="text-[11px] font-black uppercase text-slate-400 ml-3 tracking-[0.2em]">Partita IVA</label>
-          <div className="relative group">
-            <Hash className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors" size={18} />
-            <input 
-              type="text" 
-              value={piva} 
-              onChange={(e) => onUpdate({ piva: e.target.value })}
-              className="w-full bg-slate-50/50 border-2 border-slate-50 rounded-[1.5rem] pl-14 pr-5 py-5 font-bold text-slate-900 focus:bg-white focus:border-red-500/20 focus:ring-4 focus:ring-red-500/5 outline-none transition-all duration-300"
-              placeholder="12345678901"
-            />
+      <div className="space-y-10 relative z-10">
+        
+        {/* SEZIONE TIPOLOGIA */}
+        <div className="space-y-4">
+          <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+            Tipologia di attività
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {categories.map((cat) => (
+              <motion.div
+                key={cat.id}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => onUpdate({ type: cat.id })}
+                className={cn(
+                  "cursor-pointer p-4 rounded-[1.8rem] border-2 transition-all flex flex-col items-center gap-3 text-center",
+                  type === cat.id 
+                    ? "border-red-500 bg-red-50/30 shadow-sm" 
+                    : "border-slate-50 bg-slate-50/30 hover:border-slate-200 hover:bg-white"
+                )}
+              >
+                <div className={cn("p-3 rounded-2xl", cat.bg, cat.color)}>
+                  <cat.icon size={22} strokeWidth={2.5} />
+                </div>
+                <span className={cn(
+                  "text-[11px] font-black uppercase tracking-tight",
+                  type === cat.id ? "text-red-700" : "text-slate-500"
+                )}>
+                  {cat.label}
+                </span>
+              </motion.div>
+            ))}
           </div>
         </div>
 
-        <div className="space-y-3">
-          <label className="text-[11px] font-black uppercase text-slate-400 ml-3 tracking-[0.2em]">Telefono di Contatto</label>
-          <div className="relative group">
-            <Phone className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors" size={18} />
-            <input 
-              type="tel" 
-              value={phone} 
-              onChange={(e) => onUpdate({ phone: e.target.value })}
-              className="w-full bg-slate-50/50 border-2 border-slate-50 rounded-[1.5rem] pl-14 pr-5 py-5 font-bold text-slate-900 focus:bg-white focus:border-red-500/20 focus:ring-4 focus:ring-red-500/5 outline-none transition-all duration-300"
-              placeholder="+39 02..."
-            />
+        {/* GRID INPUT RECAPITI */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-slate-50 pt-10">
+          <div className="group space-y-3">
+            <label className="text-[11px] font-black uppercase text-slate-400 ml-1 tracking-[0.2em]">Partita IVA</label>
+            <div className="relative">
+              <Hash className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors" size={18} />
+              <input 
+                type="text" 
+                value={piva} 
+                onChange={(e) => onUpdate({ piva: e.target.value })}
+                className="w-full bg-slate-50/50 border border-slate-100 rounded-[1.5rem] pl-14 pr-6 py-5 font-bold text-slate-900 focus:bg-white focus:border-red-500/20 outline-none transition-all duration-300 shadow-sm"
+                placeholder="12345678901"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="md:col-span-2 space-y-3">
-          <label className="text-[11px] font-black uppercase text-slate-400 ml-3 tracking-[0.2em]">Indirizzo Sede Operativa</label>
-          <div className="relative group">
-            <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors" size={18} />
-            <input 
-              type="text" 
-              value={address} 
-              onChange={(e) => onUpdate({ address: e.target.value })}
-              className="w-full bg-slate-50/50 border-2 border-slate-50 rounded-[1.5rem] pl-14 pr-5 py-5 font-bold text-slate-900 focus:bg-white focus:border-red-500/20 focus:ring-4 focus:ring-red-500/5 outline-none transition-all duration-300"
-              placeholder="Via del Gusto 15, 20121 Milano (MI)"
-            />
+          <div className="group space-y-3">
+            <label className="text-[11px] font-black uppercase text-slate-400 ml-1 tracking-[0.2em]">Telefono</label>
+            <div className="relative">
+              <Phone className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors" size={18} />
+              <input 
+                type="tel" 
+                value={phone} 
+                onChange={(e) => onUpdate({ phone: e.target.value })}
+                className="w-full bg-slate-50/50 border border-slate-100 rounded-[1.5rem] pl-14 pr-6 py-5 font-bold text-slate-900 focus:bg-white focus:border-red-500/20 outline-none transition-all duration-300 shadow-sm"
+                placeholder="+39 02..."
+              />
+            </div>
+          </div>
+
+          <div className="md:col-span-2 group space-y-3">
+            <label className="text-[11px] font-black uppercase text-slate-400 ml-1 tracking-[0.2em]">Indirizzo Sede Operativa</label>
+            <div className="relative">
+              <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors" size={18} />
+              <input 
+                type="text" 
+                value={address} 
+                onChange={(e) => onUpdate({ address: e.target.value })}
+                className="w-full bg-slate-50/50 border border-slate-100 rounded-[1.5rem] pl-14 pr-6 py-5 font-bold text-slate-900 focus:bg-white focus:border-red-500/20 outline-none transition-all duration-300 shadow-sm"
+                placeholder="Via Roma 12, Milano"
+              />
+            </div>
           </div>
         </div>
       </div>
-    </section>
-
-    {/* SEZIONE PERICOLO - ELIMINA LOCALE */}
-    <section className="bg-red-50/30 border-2 border-dashed border-red-100 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-      <div className="flex items-center gap-4 text-center md:text-left">
-        <div className="p-3 bg-red-100 text-red-600 rounded-2xl">
-          <AlertCircle size={24} />
-        </div>
-        <div>
-          <h3 className="text-lg font-black text-red-900 leading-none mb-1">Attenzione</h3>
-          <p className="text-sm text-red-600/70 font-medium italic">L&apos;eliminazione del locale è permanente e non può essere annullata.</p>
-        </div>
-      </div>
-      
-      <motion.button 
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={onDelete}
-        className="flex items-center gap-2 px-8 py-4 bg-white border-2 border-red-100 text-red-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 shadow-sm"
-      >
-        <Trash2 size={16} />
-        Elimina Locale
-      </motion.button>
-    </section>
-  </div>
-);
+    </motion.section>
+  );
+};

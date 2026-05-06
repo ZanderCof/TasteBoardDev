@@ -12,7 +12,7 @@ import {
   Settings,
   LogOut,
   X,
-  QrCode,
+  Globe,
   CalendarDays,
   TicketPercent,
   Contact2,
@@ -33,7 +33,7 @@ const navigation = [
   {
     group: "Strumenti",
     items: [
-      { icon: QrCode, label: "QR Code", href: "/dashboard/qrcode" },
+      { icon: Globe , label: "WebLine", href: "/dashboard/webline" },
       { icon: TicketPercent, label: "Promozioni", href: "/dashboard/promotions" },
       { icon: Contact2, label: "Clienti", href: "/dashboard/customers" },
     ],
@@ -90,8 +90,8 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
                     className={cn(
                       "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200",
                       isActive
-                        ? "bg-slate-900 text-white shadow-lg shadow-slate-200"
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
+                        ? "bg-red-700 text-white shadow-lg shadow-slate-200"
+                        : "text-slate-500 hover:bg-slate-50 hover:text-red-700",
                     )}
                   >
                     <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} />

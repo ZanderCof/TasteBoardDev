@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Store, MapPin, Building2, Hash, Utensils, Coffee, Pizza, Beer, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { createStore } from "@/app/(account)/(dashboard)/dashboard/store/actions";
 
-// Definiamo le categorie con icone e colori dedicati
 const categories = [
   { id: "RESTAURANT", label: "Ristorante", icon: Utensils, color: "text-orange-500", bg: "bg-orange-50" },
   { id: "BAR", label: "Bar/Café", icon: Coffee, color: "text-blue-500", bg: "bg-blue-50" },
@@ -33,17 +34,33 @@ export const CreateStoreForm = ({ onSuccess }: Props) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !selectedType) return;
+    if (!form.name || !selectedType) {
+      toast.error("Inserisci almeno il nome e il tipo di attività");
+      return;
+    }
 
     try {
       setLoading(true);
-      // Qui aggiungerai la chiamata a Prisma
-      console.log("DATI FINALI:", { ...form, type: selectedType });
       
-      await new Promise((res) => setTimeout(res, 1500));
-      onSuccess?.();
+      // Prepariamo i dati per Prisma unendo indirizzo e città se necessario
+      const fullAddress = `${form.address}${form.city ? `, ${form.city}` : ""}`;
+
+      const result = await createStore({
+        name: form.name,
+        type: selectedType,
+        address: fullAddress,
+        // Se hai aggiunto piva allo schema, passalo qui:
+        // piva: form.piva 
+      });
+
+      if (result.success) {
+        toast.success("Benvenuto su TasteBoard! Locale creato.");
+        onSuccess?.();
+      } else {
+        toast.error(result.error || "Errore durante la creazione");
+      }
     } catch (err) {
-      console.error(err);
+      toast.error("Errore critico durante l'invio");
     } finally {
       setLoading(false);
     }
@@ -52,7 +69,7 @@ export const CreateStoreForm = ({ onSuccess }: Props) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       
-      {/* --- SELEZIONE CATEGORIA VISUALE --- */}
+      {/* SELEZIONE CATEGORIA */}
       <div className="space-y-3">
         <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">
           Tipo di attività
@@ -82,7 +99,7 @@ export const CreateStoreForm = ({ onSuccess }: Props) => {
         </div>
       </div>
 
-      {/* --- CAMPI INPUT --- */}
+      {/* INPUT FIELDS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nome</label>
@@ -118,7 +135,7 @@ export const CreateStoreForm = ({ onSuccess }: Props) => {
       <div className="space-y-2">
         <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Indirizzo Completo</label>
         <div className="flex gap-3">
-          <div className="relative group flex-2">
+          <div className="relative group flex-2 grow">
             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
               name="address"
@@ -141,18 +158,17 @@ export const CreateStoreForm = ({ onSuccess }: Props) => {
         </div>
       </div>
 
-      {/* --- SUBMIT --- */}
       <motion.button
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
         type="submit"
-        disabled={loading || !selectedType}
-        className="w-full mt-4 bg-slate-900 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-slate-200 disabled:opacity-50 disabled:shadow-none hover:bg-black transition-all flex items-center justify-center gap-3"
+        disabled={loading || !selectedType || !form.name}
+        className="w-full mt-4 bg-red-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-red-100 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none hover:bg-red-700 transition-all flex items-center justify-center gap-3"
       >
         {loading ? (
           <>
             <Loader2 className="animate-spin" size={20} />
-            <span>Elaborazione...</span>
+            <span>Creazione in corso...</span>
           </>
         ) : (
           "Attiva Locale"

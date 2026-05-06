@@ -1,108 +1,105 @@
 // app/(account)/(dashboard)/dashboard/menu/[slug]/page.tsx
-"use client";
-
-import { motion } from "framer-motion";
-import { ArrowLeft, Edit3, Eye, Calendar, Sparkles } from "lucide-react";
+import prisma from "@/lib/prisma";
+import { notFound } from "next/navigation";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { ArrowLeft, Edit3, Eye, Calendar, Sparkles, } from "lucide-react";
+import { format } from "date-fns";
+import { it } from "date-fns/locale";
+import { MenuQRCode } from "@/components/my_components/QRcode/MenuQRCode";
 
-export default function OwnerMenuViewPage() {
-  const { slug } = useParams();
+export default async function OwnerMenuViewPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
 
-  // Qui recupererai i dati reali dal database tramite il tuo slug
-  const menuInfo = {
-    title: "Menu Estivo 2024",
-    lastUpdate: "24 Maggio 2026",
-    categoriesCount: 4,
-    dishesCount: 28
-  };
+  // 1. Recupero dati reali dal DB
+  const menu = await prisma.menu.findUnique({
+    where: { id: slug },
+    include: {
+      restaurant: true,
+      _count: { select: { categories: true } },
+      categories: {
+        include: { _count: { select: { dishes: true } } }
+      }
+    }
+  });
+
+  if (!menu) notFound();
+
+  // Calcolo totale piatti
+  const totalDishes = menu.categories.reduce((acc, cat) => acc + cat._count.dishes, 0);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-slate-950 p-6 md:p-12">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#FAFAFA] text-slate-950 p-6 md:p-12 font-jakarta">
+      <div className="max-w-6xl mx-auto">
         
-        {/* ================= BARRA DI NAVIGAZIONE SUPERIORE ================= */}
+        {/* NAVIGATION */}
         <div className="flex items-center justify-between mb-12">
-          <Link 
-            href="/dashboard/menu" 
-            className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
-          >
-            <ArrowLeft size={16} /> Torna ai menu
+          <Link href="/dashboard/menu" className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-red-600 transition-all">
+            <ArrowLeft size={16} /> Torna alla lista
           </Link>
 
-          {/* Bottone principale di Switch all'Editor */}
           <Link href={`/dashboard/menu/${slug}/edit`}>
-            <motion.button 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-md hover:bg-slate-800 transition-all"
-            >
-              <Edit3 size={16} /> Modifica Menu
-            </motion.button>
+            <button className="flex items-center gap-2 bg-slate-900 text-white px-8 py-3.5 rounded-[1.5rem] text-sm font-bold shadow-xl shadow-slate-200 hover:bg-red-600 transition-all active:scale-95">
+              <Edit3 size={16} /> Modifica Contenuti
+            </button>
           </Link>
         </div>
 
-        {/* ================= HERO INFORMATIVA GENERALE ================= */}
-        <div className="relative bg-white/70 backdrop-blur-xl border border-white p-8 md:p-12 rounded-[2.5rem] shadow-sm overflow-hidden mb-8">
-          {/* Cerchio di luce giallo/oro sullo sfondo */}
-          <div className="absolute -top-20 -right-20 w-64 h-64 bg-yellow-400/10 rounded-full blur-[80px]" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 text-[10px] font-black uppercase tracking-widest mb-3">
-                <Sparkles size={10} className="fill-red-600" /> Vista Proprietario
-              </span>
-              <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900">{menuInfo.title}</h1>
-              <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mt-2 flex items-center gap-1.5">
-                <Calendar size={14} /> Ultima modifica: {menuInfo.lastUpdate}
-              </p>
-            </div>
-
-            {/* Statistiche veloci in box minimali */}
-            <div className="flex gap-4">
-              <div className="bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl text-center min-w-25">
-                <p className="text-2xl font-black text-slate-900">{menuInfo.categoriesCount}</p>
-                <p className="text-[10px] font-bold uppercase text-slate-400">Sezioni</p>
+          {/* COLONNA SINISTRA: Info e Anteprima */}
+          <div className="lg:col-span-2 space-y-8">
+            <div className="relative bg-white/70 backdrop-blur-xl border border-white p-8 md:p-12 rounded-[3rem] shadow-sm overflow-hidden">
+              <div className="absolute -top-20 -right-20 w-64 h-64 bg-red-500/5 rounded-full blur-[80px]" />
+              
+              <div className="relative z-10">
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest mb-4">
+                  <Sparkles size={12} fill="currentColor" /> Live on TasteBoard
+                </span>
+                <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-slate-900 leading-none">{menu.name}</h1>
+                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-4 flex items-center gap-2">
+                  <Calendar size={14} /> Aggiornato il {format(menu.createdAt, "dd MMMM yyyy", { locale: it })}
+                </p>
               </div>
-              <div className="bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl text-center min-w-25">
-                <p className="text-2xl font-black text-slate-900">{menuInfo.dishesCount}</p>
-                <p className="text-[10px] font-bold uppercase text-slate-400">Piatti Totali</p>
+
+              <div className="flex gap-4 mt-10">
+                <div className="bg-white border border-slate-100 px-6 py-4 rounded-2xl shadow-sm">
+                  <p className="text-2xl font-black text-slate-900 leading-none">{menu._count.categories}</p>
+                  <p className="text-[10px] font-bold uppercase text-slate-400 mt-1">Sezioni</p>
+                </div>
+                <div className="bg-white border border-slate-100 px-6 py-4 rounded-2xl shadow-sm">
+                  <p className="text-2xl font-black text-slate-900 leading-none">{totalDishes}</p>
+                  <p className="text-[10px] font-bold uppercase text-slate-400 mt-1">Piatti</p>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* ================= LINK RAPIDO QR CODE CLIENTE ================= */}
-        <div className="bg-linear-to-r from-red-500/10 to-yellow-500/5 border border-red-100 p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-red-500 border border-red-100 shadow-sm">
-              <Eye size={18} />
+            {/* Link Pubblico */}
+            <div className="bg-white border border-slate-100 p-6 rounded-[2rem] flex items-center justify-between gap-4 shadow-sm group">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-yellow-400/10 flex items-center justify-center text-yellow-600 border border-yellow-100">
+                  <Eye size={20} />
+                </div>
+                <div>
+                  <p className="text-sm font-black text-slate-900 uppercase tracking-tight">Anteprima Pubblica</p>
+                  <p className="text-xs text-slate-500">I tuoi clienti vedranno questo indirizzo.</p>
+                </div>
+              </div>
+              <Link 
+                href={`/m/${slug}`} 
+                target="_blank" 
+                className="bg-slate-50 hover:bg-slate-900 hover:text-white px-6 py-3 rounded-xl text-xs font-bold transition-all uppercase"
+              >
+                Apri Menu →
+              </Link>
             </div>
-            <div>
-              <p className="text-sm font-bold text-slate-900">Link pubblico per i clienti</p>
-              <p className="text-xs text-slate-500">Usa questo URL per generare il QR Code da mettere sui tavoli.</p>
-            </div>
           </div>
-          <Link 
-            href={`/menu/${slug}`} 
-            target="_blank" 
-            className="text-xs font-bold uppercase tracking-wider bg-white border border-slate-200 hover:border-slate-900 px-4 py-2.5 rounded-xl text-center transition-colors"
-          >
-            Vedi come Cliente →
-          </Link>
-        </div>
 
-        {/* ================= ANTEPRIMA CONTENUTI (Sola Lettura) ================= */}
-        <div className="space-y-4">
-          <h2 className="text-xs font-black uppercase text-slate-400 tracking-[0.2em] px-2">Anteprima Rapida</h2>
-          
-          {/* Qui mapperai i dati del menu visualizzandoli in sola lettura */}
-          <div className="p-6 bg-white/40 border border-white/60 rounded-3xl text-center text-slate-400 text-sm py-12">
-            I tuoi piatti e le tue categorie compariranno qui in modalità di sola lettura. <br />
-            Per fare modifiche, usa il tasto <b className="text-slate-900">Modifica Menu</b> in alto.
+          {/* COLONNA DESTRA: QR Code Generator */}
+          <div className="lg:col-span-1">
+             <MenuQRCode menuId={menu.id} restaurantName={menu.restaurant.name} />
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   );

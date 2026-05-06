@@ -5,14 +5,12 @@ import { PopularDishesGrid } from "@/components/my_components/dashboard/popularD
 import { QuickStatCard } from "@/components/my_components/dashboard/QuickStatCard ";
 import { SalesChartWidget } from "@/components/my_components/dashboard/salesChartWidget";
 import StoreStatusCard from "@/components/my_components/dashboard/storeStatusCard";
-import Topbar from "@/components/my_components/dashboard/Topbar";
 import { motion } from "framer-motion";
-import { Euro, ShoppingBag, Users, Star } from "lucide-react";
+import { Star, Clock } from "lucide-react";
 
 export default function DashboardPage() {
   return (
     <div className="px-6 lg:px-8 py-6 space-y-8">
-
       {/* HEADER */}
       <header className="space-y-1">
         <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">
@@ -20,43 +18,50 @@ export default function DashboardPage() {
         </h1>
         <p className="text-sm text-slate-500">Panoramica del tuo locale oggi</p>
       </header>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 p-4 rounded-[3rem] border border-slate-100 bg-slate-400/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_10px_40px_-15px_rgba(0,0,0,0.1)]">
+        {/* AZIONE IMMEDIATA: Prenotazioni che il ristoratore deve confermare */}
         <QuickStatCard
-          label="Incasso Odierno"
-          value="€1.240,50"
-          icon={Euro}
-          trend="+14.2%"
-          trendType="up"
-          color="green"
-          description="Rispetto a ieri"
+          label="Da Approvare"
+          value="5"
+          icon={Clock}
+          trend="Priorità"
+          trendType="down" // Down inteso come "mancanza/negativo" se sono troppe
+          color="amber"
+          description="Richiedono conferma"
         />
-        <QuickStatCard
-          label="Ordini Totali"
-          value="48"
-          icon={ShoppingBag}
-          trend="+5.1%"
-          trendType="up"
-          color="blue"
-          description="8 ordini in attesa"
-        />
-        <QuickStatCard
-          label="Nuovi Clienti"
-          value="12"
-          icon={Users}
-          trend="-2.4%"
-          trendType="down"
-          color="purple"
-          description="Iscritti oggi"
-        />
+
+        {/* CARICO DI LAVORO: Quante persone arrivano oggi */}
+        {/* <QuickStatCard
+            label="Coperti Oggi"
+            value="32"
+            icon={Users}
+            trend="+12%"
+            trendType="up"
+            color="blue"
+            description="Totale ospiti previsti"
+          /> */}
+
+        {/* REPUTAZIONE: Il dato che volevi mantenere */}
         <QuickStatCard
           label="Rating Medio"
           value="4.8"
           icon={Star}
           trend="Ottimo"
           trendType="neutral"
-          color="orange"
-          description="Basato su 24 recensioni"
+          color="emerald"
+          description="Feedback dei clienti"
         />
+
+        {/* STATO OPERATIVO: Controllo se il locale è "online"
+          <QuickStatCard
+            label="Menu Online"
+            value="Attivo"
+            icon={ShoppingBag}
+            trend="Visibile"
+            trendType="neutral"
+            color="green"
+            description="Il tuo menù è pubblico"
+          /> */}
       </div>
       {/* GRID */}
       <motion.div
@@ -69,8 +74,9 @@ export default function DashboardPage() {
           <StoreStatusCard
             isMenuPublic={true}
             qrStatus="active"
-            lastUpdate="2 min fa"
-          />
+            lastUpdate="2 min fa" 
+            activeMenuName={"Menu estivo"} 
+            totalDishes={6}          />
 
           <KpiCardStaff present={8} total={12} />
         </div>

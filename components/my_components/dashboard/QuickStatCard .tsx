@@ -2,25 +2,25 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
+import { LucideIcon, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface QuickStatProps {
   label: string;
-  value: string;
+  value: string | number;
   icon: LucideIcon;
   trend?: string;
   trendType?: "up" | "down" | "neutral";
   description?: string;
-  color?: "red" | "blue" | "green" | "orange" | "purple";
+  color?: "rose" | "indigo" | "emerald" | "amber" | "violet";
 }
 
 const colorStyles = {
-  red: "bg-red-50 text-red-600 shadow-red-100",
-  blue: "bg-blue-50 text-blue-600 shadow-blue-100",
-  green: "bg-green-50 text-green-600 shadow-green-100",
-  orange: "bg-orange-50 text-orange-600 shadow-orange-100",
-  purple: "bg-purple-50 text-purple-600 shadow-purple-100",
+  rose: "bg-rose-50 text-rose-600 border-rose-100",
+  indigo: "bg-indigo-50 text-indigo-600 border-indigo-100",
+  emerald: "bg-emerald-50 text-emerald-600 border-emerald-100",
+  amber: "bg-amber-50 text-amber-600 border-amber-100",
+  violet: "bg-violet-50 text-violet-600 border-violet-100",
 };
 
 export const QuickStatCard = ({
@@ -30,46 +30,60 @@ export const QuickStatCard = ({
   trend,
   trendType = "neutral",
   description,
-  color = "red",
+  color = "indigo",
 }: QuickStatProps) => {
   return (
     <motion.div
-      whileHover={{ y: -5 }}
-      className="relative overflow-hidden bg-white rounded-[2.5rem] p-6 border border-slate-50 shadow-[0_4px_20px_rgba(0,0,0,0.03)] group transition-all hover:shadow-[0_15px_35px_rgba(0,0,0,0.06)]"
+      whileHover={{ y: -4 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="relative overflow-hidden bg-white/80 backdrop-blur-xl rounded-[2rem] p-5 border border-slate-200/60 shadow-sm group transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:bg-white"
     >
-      {/* Glow di sfondo al passaggio del mouse */}
-      <div className="absolute -top-10 -right-10 w-24 h-24 bg-slate-50 rounded-full blur-3xl group-hover:bg-red-50 transition-colors duration-500" />
+      {/* Background Accent Gradient */}
+      <div className={cn(
+        "absolute -right-4 -top-4 w-24 h-24 blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-full",
+        colorStyles[color].split(' ')[0]
+      )} />
 
-      <div className="relative flex flex-col gap-4">
-        {/* Icona e Trend */}
-        <div className="flex items-center justify-between">
-          <div className={cn("p-4 rounded-2xl transition-transform duration-500 group-hover:scale-110 shadow-sm", colorStyles[color])}>
-            <Icon size={24} strokeWidth={2.5} />
+      <div className="relative flex flex-col h-full justify-between gap-6">
+        <div className="flex items-start justify-between">
+          {/* Icon Container */}
+          <div className={cn(
+            "p-3.5 rounded-2xl border transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-sm",
+            colorStyles[color]
+          )}>
+            <Icon size={22} strokeWidth={2} />
           </div>
 
+          {/* Trend Badge */}
           {trend && (
             <div className={cn(
-              "flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-inner",
-              trendType === "up" ? "bg-green-50 text-green-600" : 
-              trendType === "down" ? "bg-red-50 text-red-600" : 
-              "bg-slate-50 text-slate-400"
+              "flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-tight shadow-sm border",
+              trendType === "up" ? "bg-emerald-50 text-emerald-700 border-emerald-100" : 
+              trendType === "down" ? "bg-rose-50 text-rose-700 border-rose-100" : 
+              "bg-slate-50 text-slate-500 border-slate-100"
             )}>
-              {trendType === "up" ? <TrendingUp size={12} /> : trendType === "down" ? <TrendingDown size={12} /> : null}
+              {trendType === "up" && <TrendingUp size={13} />}
+              {trendType === "down" && <TrendingDown size={13} />}
+              {trendType === "neutral" && <Minus size={13} />}
               {trend}
             </div>
           )}
         </div>
 
-        {/* Valori */}
-        <div className="space-y-1">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+        {/* Content */}
+        <div>
+          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">
             {label}
           </p>
-          <h4 className="text-3xl font-black text-slate-900 tracking-tighter leading-none group-hover:text-red-600 transition-colors">
-            {value}
-          </h4>
+          <div className="flex items-baseline gap-2">
+            <h4 className="text-3xl font-bold text-slate-900 tracking-tight transition-colors duration-300 group-hover:text-slate-950">
+              {value}
+            </h4>
+          </div>
           {description && (
-            <p className="text-[11px] text-slate-400 font-medium mt-1 ml-1">
+            <p className="text-[12px] text-slate-400 font-medium mt-1.5 flex items-center gap-1">
+              <span className="w-1 h-1 rounded-full bg-slate-200" />
               {description}
             </p>
           )}

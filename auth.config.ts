@@ -22,6 +22,7 @@ export const authConfig = {
         });
 
         const data = await res.json();
+        console.log("Dati ricevuti da StartingLine:", data);
         if (res.ok && data.success) return data.user;
         return null;
       },

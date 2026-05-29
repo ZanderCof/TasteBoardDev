@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Users, Clock, Phone, Trash2, Loader2, Armchair, Monitor, PhoneCall } from "lucide-react"
 import { deleteReservation } from "@/app/actions/bookings"
-import { EditReservationDialog } from "../dashboard/tables/EditReservationDialog"
+import { EditReservationDialog } from "./EditReservationDialog"
 
 interface ReservationCardProps {
   reservation: {
@@ -25,11 +25,10 @@ interface ReservationCardProps {
       name: string;
     } | null;
   };
-  allTables: { id: string; name: string; minCapacity: number; maxCapacity: number }[];
-  occupiedTableIds: string[]; // già filtrati da page.tsx (escluso il tavolo corrente)
+  allTables: { id: string; name: string; minCapacity: number; maxCapacity: number; }[]; // ➕ Serve per la modale di modifica
 }
 
-export function ReservationCard({ reservation, allTables, occupiedTableIds }: ReservationCardProps) {
+export function ReservationCard({ reservation, allTables }: ReservationCardProps) {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -43,12 +42,13 @@ export function ReservationCard({ reservation, allTables, occupiedTableIds }: Re
     }
   }
 
-  const orarioArrivo = new Date(reservation.date).toISOString().split("T")[1].substring(0, 5)
+  // Estraiamo l'ora in modo sicuro dal formato ISO salvato
+  const orarioArrivo = new Date(reservation.date).toISOString().split('T')[1].substring(0, 5)
 
   return (
     <Card className="border-l-4 border-l-emerald-600 hover:shadow-md transition-shadow bg-white rounded-2xl overflow-hidden">
       <CardContent className="p-5 space-y-4">
-
+        
         {/* RIGA SUPERIORE: Anagrafica e Contatti */}
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
@@ -64,27 +64,28 @@ export function ReservationCard({ reservation, allTables, occupiedTableIds }: Re
                 </Badge>
               )}
             </div>
-
+            
+            {/* Orario e Persone */}
             <div className="flex items-center text-sm text-slate-500 gap-4">
               <span className="flex items-center gap-1 font-semibold">
-                <Clock size={14} className="text-slate-400" /> {orarioArrivo}
+                <Clock size={14} className="text-slate-400"/> {orarioArrivo}
               </span>
               <span className="flex items-center gap-1 font-semibold">
-                <Users size={14} className="text-slate-400" />
-                {reservation.guests} {reservation.guests === 1 ? "persona" : "persone"}
+                <Users size={14} className="text-slate-400"/> 
+                {reservation.guests} {reservation.guests === 1 ? 'persona' : 'persone'}
               </span>
             </div>
           </div>
 
-          {/* Telefono */}
+          {/* Badge Stato e Telefono */}
           <div className="flex flex-col items-end gap-1 shrink-0">
             <span className="text-xs font-bold flex items-center gap-1 text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
-              <Phone size={12} className="text-slate-400" /> {reservation.phone}
+              <Phone size={12} className="text-slate-400"/> {reservation.phone}
             </span>
           </div>
         </div>
 
-        {/* TAVOLO ASSEGNATO */}
+        {/* 🪑 BLOCCO TAVOLO ASSEGNATO (Ben visibile) */}
         <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
@@ -99,37 +100,31 @@ export function ReservationCard({ reservation, allTables, occupiedTableIds }: Re
           </div>
         </div>
 
-        {/* Note */}
+        {/* Note del cliente */}
         {reservation.notes && (
           <p className="text-xs text-slate-500 italic bg-amber-50/50 p-2 rounded-lg border border-amber-100/50">
-            &quot;{reservation.notes}&quot;
+            "{reservation.notes}"
           </p>
         )}
 
-        {/* AZIONI */}
+        {/* RIGA INFERIORE: Menu Azioni Rapide */}
         <div className="pt-2 border-t border-slate-50 flex items-center justify-between">
-          <Button
-            size="sm"
-            variant="ghost"
+          {/* Bottone Elimina */}
+          <Button 
+            size="sm" 
+            variant="ghost" 
             onClick={handleDelete}
             disabled={isDeleting}
             className="text-xs text-slate-400 hover:text-rose-600 font-bold rounded-lg h-8 px-2.5 hover:bg-rose-50"
           >
-            {isDeleting ? (
-              <Loader2 size={13} className="animate-spin mr-1" />
-            ) : (
-              <Trash2 size={13} className="mr-1" />
-            )}
+            {isDeleting ? <Loader2 size={13} className="animate-spin mr-1" /> : <Trash2 size={13} className="mr-1" />}
             Elimina
           </Button>
 
-          {/* Passa occupiedTableIds all'edit dialog */}
-          <EditReservationDialog
-            reservation={reservation}
-            tables={allTables}
-            occupiedTableIds={occupiedTableIds}
-          />
+          {/* Modale di Modifica */}
+          <EditReservationDialog reservation={reservation} tables={allTables} />
         </div>
+
       </CardContent>
     </Card>
   )

@@ -6,6 +6,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model Reservation {
   id           String     @id @default(cuid())
   customerName String
@@ -13,36 +14,61 @@ model Reservation {
   phone        String
   date         DateTime
   guests       Int
-  tableNumber  String?
-  status       Status     @default(PENDING)
   notes        String?
-  restaurantId String     // <--- Obbligatorio per filtrare
+  status       Status     @default(PENDING)
+  
+  // ➕ NUOVO: Capire se arriva dal sito (false) o se il ristoratore l'ha presa al telefono (true)
+  isManual     Boolean    @default(false) 
+
+  restaurantId String     
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  
+  // 🪑 MODIFICATO: Invece di una stringa di testo libera, colleghiamo la prenotazione a un tavolo reale
+  tableId      String?
+  table        Table?     @relation(fields: [tableId], references: [id], onDelete: SetNull)
+
   createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt // <--- Per tracciare modifiche
+  updatedAt    DateTime   @updatedAt 
 }
 
 enum Status {
-  PENDING
-  CONFIRMED
-  CANCELLED
+  PENDING      // Richiesta dal sito, in attesa
+  CONFIRMED    // Approvata dal proprietario
+  DECLINED     // ➕ NUOVO: Rifiutata dal proprietario
+  CANCELLED    // Annullata (magari dal cliente stesso)
 }
+
 model Restaurant {
   id           String        @id @default(cuid())
-  userId       String        // Rimosso @unique se un utente può avere più locali
+  userId       String        
   name         String
   address      String?
   logo         String?
   type         String?
-  menus        Menu[]        // <--- Un locale ha più Menu
+  menus        Menu[]        
   reservations Reservation[]
+  tables       Table[]       // ➕ NUOVO: Il locale ha la sua mappa dei tavoli
   createdAt    DateTime      @default(now())
 }
 
+model Table {
+  id           String        @id @default(cuid())
+  name         String        // Es: "Tavolo 1", "Terrazza 4"
+  minCapacity  Int           @default(1)  // ➕ NUOVO: Posti minimi
+  maxCapacity  Int                        // 🔄 MODIFICATO: Sostituisce la vecchia "capacity"
+  restaurantId String
+  restaurant   Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  reservations Reservation[]
+}
+
+/**
+ * I modelli Menu, Category e Dish rimangono IDENTICI ai tuoi 
+ * perché la logica è già impeccabile.
+ */
 model Menu {
-  id           String     @id @default(cuid())
+  id           String   @id @default(cuid())
   name         String
-  isPublished  Boolean    @default(false)
+  isPublished  Boolean  @default(false)
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   categories   Category[]
@@ -50,19 +76,19 @@ model Menu {
 }
 
 model Category {
-  id        String   @id @default(cuid())
-  name      String
-  order     Int      @default(0)
-  menuId    String
-  menu      Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
-  dishes    Dish[]
+  id     String @id @default(cuid())
+  name   String
+  order  Int    @default(0)
+  menuId String
+  menu   Menu   @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  dishes Dish[]
 }
 
 model Dish {
   id          String   @id @default(cuid())
   name        String
   description String?
-  price       Decimal
+  price       Decimal  @db.Decimal(10, 2) // Consiglio: aggiungi @db.Decimal per Postgres
   image       String?
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)

@@ -16,6 +16,7 @@ import {
   CalendarDays,
   TicketPercent,
   Contact2,
+  Sofa,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
@@ -44,6 +45,7 @@ const navigation = [
     group: "Strumenti",
     items: [
       { icon: Globe, label: "WebLine", href: "/dashboard/webline" },
+      { icon: Sofa, label: "Gestore Tavoli", href: "/dashboard/tables" },
       {
         icon: TicketPercent,
         label: "Promozioni",

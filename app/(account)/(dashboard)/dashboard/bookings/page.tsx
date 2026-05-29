@@ -1,98 +1,109 @@
 // app/(account)/(dashboard)/dashboard/bookings/page.tsx
 import prisma from "@/lib/prisma";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { format } from "date-fns";
-import { it } from "date-fns/locale";
-import { DatePickerFilter } from "@/components/my_components/reservation/date-picker";
-import { ReservationCard } from "@/components/my_components/reservation/ReservationCard";
+import { format, addDays, startOfToday } from "date-fns";
 import { ReservationStats } from "@/components/my_components/reservation/ReservationStats";
+import { AddReservationDialog } from "@/components/my_components/reservation/AddReservationDialog";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { BookingsViewer } from "@/components/my_components/reservation/Bookingsviewer";
 
-// DEFINIAMO IL TIPO CORRETTO PER NEXT.js 15
 type PageProps = {
-  searchParams: Promise<{ date?: string }>;
+  searchParams: Promise<{ restaurantId?: string }>;
 };
 
 export default async function BookingsPage({ searchParams }: PageProps) {
-  // 1. Await dei searchParams (Obbligatorio in Next.js 15+)
-  const { date: dateParam } = await searchParams;
-  
-  const selectedDate = dateParam ? new Date(dateParam) : new Date();
-  
-  const startOfDay = new Date(selectedDate);
-  startOfDay.setHours(0, 0, 0, 0);
-  
-  const endOfDay = new Date(selectedDate);
-  endOfDay.setHours(23, 59, 59, 999);
+  const { restaurantId: restaurantParam } = await searchParams;
+  const session = await auth();
 
-  // 2. Fetch dei dati
-  const bookings = await prisma.reservation.findMany({
-    where: {
-      date: {
-        gte: startOfDay,
-        lte: endOfDay,
+  if (!session?.user?.id) redirect("/login");
+
+  let currentRestaurantId = restaurantParam;
+  if (!currentRestaurantId) {
+    const firstRestaurant = await prisma.restaurant.findFirst({
+      where: { userId: session.user.id },
+      select: { id: true },
+    });
+    if (!firstRestaurant) redirect("/dashboard/restaurants/new");
+    currentRestaurantId = firstRestaurant.id;
+  }
+
+  const today = startOfToday();
+  const weekEnd = addDays(today, 7);
+
+  const [bookings, totalTablesCount, allTables] = await Promise.all([
+    prisma.reservation.findMany({
+      where: {
+        restaurantId: currentRestaurantId,
+        date: { gte: today, lte: weekEnd },
+        status: { notIn: ["CANCELLED", "DECLINED"] },
       },
+      include: { table: true },
+      orderBy: { date: "asc" },
+    }),
+    prisma.table.count({ where: { restaurantId: currentRestaurantId } }),
+    prisma.table.findMany({
+      where: { restaurantId: currentRestaurantId },
+      select: { id: true, name: true, minCapacity: true, maxCapacity: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
+
+  // Raggruppa prenotazioni per giorno
+  const bookingsByDay = bookings.reduce<Record<string, typeof bookings>>(
+    (acc, booking) => {
+      const key = new Date(booking.date).toISOString().split("T")[0];
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(booking);
+      return acc;
     },
-    orderBy: { date: "asc" },
+    {}
+  );
+
+  // Tavoli occupati per giorno
+  const occupiedByDay = Object.fromEntries(
+    Object.entries(bookingsByDay).map(([day, dayBookings]) => [
+      day,
+      dayBookings.map((b) => b.tableId).filter(Boolean) as string[],
+    ])
+  );
+
+  // Array dei 8 giorni (oggi + 7)
+  const days = Array.from({ length: 8 }, (_, i) => {
+    const d = addDays(today, i);
+    const key = d.toISOString().split("T")[0];
+    return { date: d, key, bookings: bookingsByDay[key] ?? [] };
   });
 
+  const todayKey = today.toISOString().split("T")[0];
+  const todayOccupied = occupiedByDay[todayKey] ?? [];
+
   return (
-    <div className="space-y-8 p-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="p-8 bg-slate-50 min-h-screen space-y-8">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase">
             Gestione <span className="text-red-600">Prenotazioni</span>
           </h1>
-          <p className="text-muted-foreground font-medium first-letter:uppercase">
-            {format(selectedDate, "eeee d MMMM yyyy", { locale: it })}
+          <p className="text-muted-foreground font-medium">
+            Prossimi 7 giorni · TasteBoard
           </p>
         </div>
-        <Button className="bg-red-600 hover:bg-red-700 text-white font-bold h-12 px-6 shadow-lg shadow-red-200 transition-all active:scale-95">
-          <Plus className="mr-2 h-5 w-5" /> NUOVA PRENOTAZIONE
-        </Button>
-      </div>
+        <AddReservationDialog
+          restaurantId={currentRestaurantId}
+          tables={allTables}
+          currentSelectedDate={today}
+          occupiedTableIds={todayOccupied}
+        />
+      </header>
 
-      <ReservationStats bookings={bookings} />
+      <ReservationStats bookings={bookings} totalTablesCount={totalTablesCount} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <aside className="lg:col-span-4 space-y-6">
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-            <h3 className="font-bold mb-4 flex items-center gap-2 text-slate-700 uppercase text-sm tracking-wider">
-              <span className="w-2 h-2 bg-yellow-400 rounded-full" />
-              Calendario
-            </h3>
-            <DatePickerFilter />
-          </div>
-        </aside>
-
-        <main className="lg:col-span-8">
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 min-h-125">
-            <div className="flex items-center justify-between mb-6 border-b border-slate-50 pb-4">
-              <h2 className="text-xl font-black text-slate-800 uppercase tracking-tighter">
-                Lista Arrivi
-              </h2>
-              <span className="bg-red-50 text-red-600 px-4 py-1 rounded-full text-xs font-black border border-red-100">
-                {bookings.length} {bookings.length === 1 ? 'PRENOTAZIONE' : 'PRENOTAZIONI'}
-              </span>
-            </div>
-
-            <div className="grid gap-4">
-              {bookings.length > 0 ? (
-                bookings.map((booking) => (
-                  <ReservationCard key={booking.id} reservation={booking} />
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center py-24 text-center">
-                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-dashed border-slate-200">
-                    <Plus className="text-slate-300 w-8 h-8" />
-                  </div>
-                  <p className="text-slate-500 font-bold text-lg">Nessun tavolo prenotato</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </main>
-      </div>
+      {/* Nuovo viewer con select giorno */}
+      <BookingsViewer
+        days={days}
+        allTables={allTables}
+        occupiedByDay={occupiedByDay}
+      />
     </div>
   );
 }

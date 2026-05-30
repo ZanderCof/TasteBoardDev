@@ -73,7 +73,6 @@ function BookingRow({
     if (!confirm(`Confermare l'arrivo di ${reservation.customerName}? La prenotazione verrà rimossa.`)) return
     setIsArriving(true)
     try {
-      // Animazione di "check" prima di rimuovere
       setArrived(true)
       await new Promise((r) => setTimeout(r, 600))
       await confirmArrival(reservation.id)
@@ -84,81 +83,83 @@ function BookingRow({
     }
   }
 
-  const time  = format(new Date(reservation.date), "yyyy-MM-dd");
+  // FIX: Formattato in HH:mm (ora e minuti) anziché yyyy-MM-dd
+  const time = format(new Date(reservation.date), "HH:mm");
 
   return (
     <div
-      className={`relative rounded-2xl border overflow-hidden transition-all duration-300
+      className={`relative rounded-2xl border transition-all duration-300 ease-out
         ${arrived
-          ? "bg-emerald-50 border-emerald-200 scale-95 opacity-0"
+          ? "bg-emerald-50/60 border-emerald-200 scale-95 opacity-0"
           : expanded
-            ? "bg-white border-slate-300 shadow-lg"
-            : "bg-white border-slate-100 hover:border-slate-200 hover:shadow-md"
+            ? "bg-slate-50/40 border-slate-300 shadow-md ring-1 ring-slate-200"
+            : "bg-white border-slate-100 hover:border-slate-200 hover:shadow-sm hover:-translate-y-0.5"
         }`}
     >
-      {/* Accent bar */}
-      <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl transition-colors duration-300
-        ${arrived ? "bg-emerald-500" : "bg-emerald-500"}`}
+      {/* Accent bar laterale */}
+      <div className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl transition-colors duration-300
+        ${arrived ? "bg-emerald-500" : reservation.isManual ? "bg-blue-500" : "bg-violet-500"}`}
       />
 
-      {/* Main row — click per espandere */}
+      {/* Main row */}
       <div
         className="flex items-center gap-4 px-5 py-4 pl-6 cursor-pointer select-none"
         onClick={() => setExpanded((v) => !v)}
       >
         {/* Time bubble */}
-        <div className="shrink-0 w-14 h-14 rounded-xl bg-slate-950 flex flex-col items-center justify-center">
-          <span className="text-white font-black text-base leading-none">{time}</span>
-          <span className="text-slate-500 text-[9px] font-bold uppercase tracking-widest mt-0.5">ora</span>
+        <div className="shrink-0 w-14 h-14 rounded-xl bg-slate-900 shadow-sm flex flex-col items-center justify-center border border-slate-800">
+          <span className="text-white font-bold text-base tracking-tight leading-none">{time}</span>
+          <span className="text-slate-400 text-[9px] font-black uppercase tracking-wider mt-1">ora</span>
         </div>
 
         {/* Name + meta */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-black text-slate-900 text-base truncate">
+            <span className="font-semibold text-slate-900 text-base tracking-tight truncate">
               {reservation.customerName}
             </span>
             {reservation.isManual ? (
-              <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider bg-blue-50 text-blue-500 px-2 py-0.5 rounded-full">
-                <PhoneCall size={8} /> tel
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-md border border-blue-100/50">
+                <PhoneCall size={10} /> Tel
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider bg-violet-50 text-violet-500 px-2 py-0.5 rounded-full">
-                <Monitor size={8} /> online
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-violet-50 text-violet-600 px-2.5 py-0.5 rounded-md border border-violet-100/50">
+                <Monitor size={10} /> Online
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3 mt-1">
-            <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
-              <Users size={11} className="text-slate-400" />
-              {reservation.guests} pers.
+          
+          <div className="flex items-center gap-4 mt-1.5">
+            <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
+              <Users size={13} className="text-slate-400" />
+              <strong className="text-slate-700 font-semibold">{reservation.guests}</strong> ospiti
             </span>
-            <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
-              <Armchair size={11} className="text-slate-400" />
-              {reservation.table?.name ?? "—"}
+            <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
+              <Armchair size={13} className="text-slate-400" />
+              Tavolo: <strong className="text-slate-700 font-semibold">{reservation.table?.name ?? "—"}</strong>
             </span>
           </div>
         </div>
 
         {/* Phone + chevron */}
-        <div className="shrink-0 flex flex-col items-end gap-1.5">
-          <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
-            <Phone size={10} /> {reservation.phone}
+        <div className="shrink-0 flex flex-col items-end gap-2">
+          <span className="text-xs font-medium text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100 flex items-center gap-1">
+            <Phone size={11} className="text-slate-400" /> {reservation.phone}
           </span>
           <ChevronRight
-            size={14}
-            className={`text-slate-300 transition-transform duration-200 ${expanded ? "rotate-90" : ""}`}
+            size={16}
+            className={`text-slate-400 transition-transform duration-300 ease-in-out ${expanded ? "rotate-90 text-slate-600" : ""}`}
           />
         </div>
       </div>
 
       {/* Expanded panel */}
       {expanded && (
-        <div className="px-6 pb-5 pt-1 border-t border-slate-50 space-y-4">
-
+        <div className="px-6 pb-5 pt-2 border-t border-slate-100 space-y-4 bg-white/50 backdrop-blur-sm rounded-b-2xl">
           {/* Note */}
           {reservation.notes && (
-            <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 text-xs text-amber-800 font-medium italic">
+            <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-3.5 text-xs text-amber-900 font-medium leading-relaxed shadow-inner">
+              <span className="font-bold block text-[10px] uppercase tracking-wider text-amber-700 mb-0.5">Note cliente:</span>
               "{reservation.notes}"
             </div>
           )}
@@ -167,30 +168,29 @@ function BookingRow({
           <button
             onClick={handleArrival}
             disabled={isArriving || arrived}
-            className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-sm transition-all duration-200
+            className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all duration-200 shadow-sm
               ${arrived
-                ? "bg-emerald-500 text-white"
-                : "bg-emerald-50 text-emerald-700 hover:bg-emerald-500 hover:text-white border border-emerald-200 hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-100 active:scale-95"
+                ? "bg-emerald-600 text-white"
+                : "bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md hover:shadow-emerald-100 active:scale-[0.99] disabled:opacity-50"
               }`}
           >
-            {isArriving
-              ? <Loader2 size={15} className="animate-spin" />
-              : <CheckCircle2 size={15} />
-            }
-            {arrived ? "Benvenuto! 🎉" : "Conferma Arrivo"}
+            {isArriving ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <CheckCircle2 size={16} />
+            )}
+            {arrived ? "Benvenuto! 🎉" : "Conferma Arrivo Ospite"}
           </button>
 
           {/* Elimina + Modifica */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pt-1 border-t border-slate-100">
             <button
               onClick={handleDelete}
               disabled={isDeleting}
-              className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-rose-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-rose-50"
+              className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-rose-600 transition-colors px-2.5 py-1.5 rounded-lg hover:bg-rose-50"
             >
-              {isDeleting
-                ? <Loader2 size={12} className="animate-spin" />
-                : <Trash2 size={12} />}
-              Elimina
+              {isDeleting ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+              Elimina prenotazione
             </button>
 
             <EditReservationDialog
@@ -215,45 +215,55 @@ export function BookingsViewer({ days, allTables, occupiedByDay }: BookingsViewe
   const totalBookings = days.reduce((sum, d) => sum + d.bookings.length, 0)
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-
+    <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xl shadow-slate-100/40 overflow-hidden">
+      
       {/* ── Header ── */}
-      <div className="px-6 pt-6 pb-4 border-b border-slate-50">
+      <div className="px-6 pt-6 pb-5 border-b border-slate-100 bg-slate-50/50">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="font-black text-slate-900 text-lg uppercase tracking-tight">
-              Prossimi <span className="text-red-600">7 giorni</span>
+            <h2 className="font-bold text-slate-900 text-lg tracking-tight">
+              Prossimi <span className="text-slate-500 font-medium">7 Giorni</span>
             </h2>
             <p className="text-xs text-slate-400 font-medium mt-0.5">
-              {totalBookings} prenotazioni totali
+              <span className="font-semibold text-slate-600">{totalBookings}</span> prenotazioni registrate
             </p>
           </div>
-          <Calendar size={18} className="text-slate-300" />
+          <div className="p-2 bg-white rounded-xl border border-slate-200 shadow-sm">
+            <Calendar size={16} className="text-slate-500" />
+          </div>
         </div>
 
         {/* ── Day pills ── */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide snap-x">
           {days.map((day, i) => {
             const active = i === selectedIndex
             const hasBookings = day.bookings.length > 0
-            const label = isToday(day.date) ? "oggi" : isTomorrow(day.date) ? "dom" : format(day.date, "EEE", { locale: it })
+            const label = isToday(day.date) ? "Oggi" : isTomorrow(day.date) ? "Dom" : format(day.date, "EEE", { locale: it })
+            
             return (
               <button
                 key={day.key}
                 onClick={() => setSelectedIndex(i)}
-                className={`shrink-0 flex flex-col items-center px-3 py-2 rounded-xl transition-all duration-150 min-w-[56px]
+                className={`shrink-0 flex flex-col items-center px-3.5 py-2.5 rounded-xl transition-all duration-200 min-w-[58px] snap- Orcas
                   ${active
-                    ? "bg-slate-950 shadow-lg shadow-slate-200"
-                    : "bg-slate-50 hover:bg-slate-100"
+                    ? "bg-slate-900 text-white shadow-md shadow-slate-900/10 scale-105"
+                    : "bg-white border border-slate-200 hover:border-slate-300 text-slate-700"
                   }`}
               >
                 <span className={`text-[10px] font-bold uppercase tracking-wider ${active ? "text-slate-400" : "text-slate-400"}`}>
                   {label}
                 </span>
-                <span className={`text-lg font-black leading-tight ${active ? "text-white" : "text-slate-700"}`}>
+                <span className="text-lg font-bold tracking-tight mt-0.5 leading-none">
                   {format(day.date, "d")}
                 </span>
-                <div className={`w-1 h-1 rounded-full mt-0.5 ${hasBookings ? "bg-red-500" : "bg-transparent"}`} />
+                
+                {/* Indicatore prenotazioni migliorato */}
+                <div className={`w-1.5 h-1.5 rounded-full mt-1.5 transition-all
+                  ${hasBookings 
+                    ? active ? "bg-amber-400 scale-110" : "bg-slate-400" 
+                    : "bg-transparent"
+                  }`} 
+                />
               </button>
             )
           })}
@@ -261,21 +271,21 @@ export function BookingsViewer({ days, allTables, occupiedByDay }: BookingsViewe
       </div>
 
       {/* ── Day title + count ── */}
-      <div className="px-6 py-4 flex items-center justify-between">
-        <h3 className="font-black text-slate-800 text-base capitalize">
+      <div className="px-6 py-4 flex items-center justify-between bg-white border-b border-slate-50">
+        <h3 className="font-bold text-slate-800 text-base capitalize tracking-tight">
           {format(selectedDay.date, "EEEE d MMMM", { locale: it })}
         </h3>
-        <span className={`text-xs font-black px-3 py-1 rounded-full
+        <span className={`text-xs font-bold px-3 py-1 rounded-full border
           ${selectedDay.bookings.length > 0
-            ? "bg-emerald-50 text-emerald-700"
-            : "bg-slate-100 text-slate-400"
+            ? "bg-emerald-50 border-emerald-100 text-emerald-700"
+            : "bg-slate-50 border-slate-100 text-slate-400"
           }`}>
           {selectedDay.bookings.length} {selectedDay.bookings.length === 1 ? "arrivo" : "arrivi"}
         </span>
       </div>
 
       {/* ── List ── */}
-      <div className="px-6 pb-6 space-y-3 min-h-[200px]">
+      <div className="px-6 pb-6 pt-2 space-y-3.5 min-h-[220px]">
         {selectedDay.bookings.length > 0 ? (
           selectedDay.bookings.map((booking) => (
             <BookingRow
@@ -286,12 +296,12 @@ export function BookingsViewer({ days, allTables, occupiedByDay }: BookingsViewe
             />
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-3">
-              <Calendar size={20} className="text-slate-300" />
+          <div className="flex flex-col items-center justify-center py-16 text-center border-2 border-dashed border-slate-100 rounded-2xl">
+            <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-3 text-slate-400">
+              <Calendar size={20} />
             </div>
-            <p className="text-slate-400 font-bold text-sm">Nessuna prenotazione</p>
-            <p className="text-slate-300 text-xs font-medium mt-1">Giornata libera</p>
+            <p className="text-slate-700 font-semibold text-sm">Nessun tavolo prenotato</p>
+            <p className="text-slate-400 text-xs font-medium mt-0.5">I clienti vedranno questa giornata come libera</p>
           </div>
         )}
       </div>

@@ -1,44 +1,79 @@
-"use client";
-import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
+// components/my_components/cliente/PublicDishCard.tsx
 import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { UtensilsCrossed } from "lucide-react";
 
-interface DishProps {
+interface PublicDishCardProps {
   name: string;
-  price: string;
+  price: number;
   description?: string;
   image?: string;
+  available?: boolean;
 }
 
-export function PublicDishCard({ name, price, description, image }: DishProps) {
+export function PublicDishCard({
+  name,
+  price,
+  description,
+  image,
+  available = true,
+}: PublicDishCardProps) {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="flex gap-4 p-4 bg-white rounded-[2rem] border border-slate-100 shadow-sm active:scale-[0.98] transition-all"
+    <div
+      className={cn(
+        "relative flex items-center gap-4 bg-white rounded-2xl border p-4 transition-all duration-200",
+        available
+          ? "border-slate-100 shadow-sm"
+          : "border-slate-100 opacity-50 grayscale"
+      )}
     >
-      <div className="flex-1 space-y-2">
-        <div className="flex justify-between items-start gap-2">
-          <h3 className="font-bold text-slate-900 text-base leading-tight">{name}</h3>
-          <span className="font-black text-red-600 tracking-tighter shrink-0">€{price}</span>
+      {/* Testo */}
+      <div className="flex-1 min-w-0 space-y-1">
+        <div className="flex items-start gap-2 flex-wrap">
+          <h3 className={cn(
+            "font-bold text-slate-900 leading-snug",
+            !available && "line-through decoration-slate-400"
+          )}>
+            {name}
+          </h3>
+
+          {/* Badge terminato */}
+          {!available && (
+            <span className="shrink-0 inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full border border-slate-200">
+              <UtensilsCrossed size={9} />
+              Terminato
+            </span>
+          )}
         </div>
+
         {description && (
-          <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 font-medium italic">
+          <p className="text-xs text-slate-400 font-medium leading-relaxed line-clamp-2">
             {description}
           </p>
         )}
+
+        <p className={cn(
+          "font-black text-base tracking-tight",
+          available ? "text-slate-900" : "text-slate-400"
+        )}>
+          €{price.toFixed(2)}
+        </p>
       </div>
 
-      {image ? (
-        <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0 border border-slate-50">
-          <Image src={image} alt={name} className="w-full h-full object-cover" />
-        </div>
-      ) : (
-        <div className="w-24 h-24 rounded-2xl bg-yellow-400/5 flex items-center justify-center text-yellow-600/30 shrink-0">
-          <Plus size={24} strokeWidth={3} />
-        </div>
-      )}
-    </motion.div>
+      {/* Immagine / placeholder */}
+      <div className="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center">
+        {image ? (
+          <Image
+            src={image}
+            alt={name}
+            width={80}
+            height={80}
+            className="object-cover w-full h-full"
+          />
+        ) : (
+          <UtensilsCrossed size={20} className="text-slate-200" />
+        )}
+      </div>
+    </div>
   );
 }

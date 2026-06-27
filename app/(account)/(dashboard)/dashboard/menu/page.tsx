@@ -1,10 +1,10 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth"; 
-import MenuListCard from "@/components/my_components/dashboard/menu/MenuListCard";
 import CreateMenuCard from "@/components/my_components/dashboard/menu/CreateMenuCard";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { redirect } from "next/navigation";
+import MenuListCard from "@/components/my_components/dashboard/menu/MenuListCard";
 
 // Aggiungiamo searchParams per leggere l'ID dall'URL
 export default async function MenuListPage({ 

@@ -6,8 +6,8 @@ import { Check, Zap, Crown } from "lucide-react";
 
 const plans = [
   {
-    name: "Light",
-    price: "9",
+    name: "Essential",
+    price: "29",
     desc: "Perfetto per piccoli bar o chioschi che vogliono solo il digitale.",
     features: ["Menu QR illimitati", "Aggiornamenti in tempo reale", "Supporto email", "1 Utente Admin"],
     icon: <Zap className="text-yellow-500" size={24} />,
@@ -15,7 +15,7 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "29",
+    price: "59",
     desc: "La soluzione completa per ristoranti che vogliono ottimizzare tutto.",
     features: [
       "Tutto del piano Light",
@@ -29,7 +29,7 @@ const plans = [
   },
 ];
 
-export function PricingTeaser() {
+export function   PricingTeaser() {
   return (
     <section className="py-24 bg-white relative">
       <div className="container mx-auto px-6 max-w-5xl">

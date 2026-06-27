@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 
 const plans = [
   {
-    name: "Light",
-    price: 9,
+    name: "Essential",
+    price: 29,
     description: "Ideale per piccoli bar e chioschi.",
     features: ["Menu QR illimitati", "Aggiornamenti Live", "Gestione Categorie", "Supporto Email"],
     cta: "Inizia ora",
@@ -14,15 +14,15 @@ const plans = [
   },
   {
     name: "Pro",
-    price: 29,
+    price: 59,
     description: "Tutto quello che serve per un ristorante.",
     features: ["Tutto del piano Light", "Gestione Dipendenti & Turni", "Food Cost & Inventario", "Analisi Vendite Avanzate", "Supporto WhatsApp 24/7"],
     cta: "Prova Gratis",
     popular: true
   },
   {
-    name: "Enterprise",
-    price: 59,
+    name: "Business",
+    price: 99,
     description: "Per catene e franchising multi-locale.",
     features: ["Multi-tenant (più sedi)", "Account Manager dedicato", "Integrazione POS", "Reportistica Personalizzata"],
     cta: "Contattaci",

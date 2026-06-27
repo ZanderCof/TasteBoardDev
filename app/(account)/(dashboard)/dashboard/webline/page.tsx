@@ -34,7 +34,7 @@ export default function WebLinePromoPage() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-violet-50 border border-violet-100 rounded-full text-violet-600 shadow-sm"
           >
             <Sparkles size={14} className="fill-current" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">StartingLine Presenta</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Nuviio Presenta</span>
           </motion.div>
 
           <motion.h1 

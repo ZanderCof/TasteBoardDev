@@ -1,4 +1,4 @@
-// Sincronizzazione best-effort verso l'hub StartingLine.
+// Sincronizzazione best-effort verso l'hub Nuviio.
 // Non è la fonte di verità: se l'hub non risponde, l'azione locale
 // in TasteBoard deve comunque andare a buon fine.
 
@@ -55,7 +55,7 @@ export type HubTicketDetail = {
 
 async function postToHub(path: string, payload: Record<string, unknown>) {
   try {
-    const res = await fetch(`${process.env.STARTINGLINE_HUB_URL}${path}`, {
+    const res = await fetch(`${process.env.NUVIIO_HUB_URL}${path}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ secret: process.env.INTERNAL_API_SECRET, ...payload }),
@@ -102,7 +102,7 @@ export async function replyToTicketOnHub(payload: {
   | { success: false; error: string }
 > {
   try {
-    const res = await fetch(`${process.env.STARTINGLINE_HUB_URL}/api/external/tasteboard/tickets/reply`, {
+    const res = await fetch(`${process.env.NUVIIO_HUB_URL}/api/external/tasteboard/tickets/reply`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ secret: process.env.INTERNAL_API_SECRET, ...payload }),
@@ -127,7 +127,7 @@ export async function fetchTicketsFromHub(
 ): Promise<{ success: true; tickets: HubTicketDetail[] } | { success: false; error: string }> {
   try {
     const res = await fetch(
-      `${process.env.STARTINGLINE_HUB_URL}/api/external/tasteboard/tickets?email=${encodeURIComponent(email)}`,
+      `${process.env.NUVIIO_HUB_URL}/api/external/tasteboard/tickets?email=${encodeURIComponent(email)}`,
       {
         method: "GET",
         headers: { "x-internal-secret": process.env.INTERNAL_API_SECRET ?? "" },

@@ -10,7 +10,7 @@ export function RegisterForm({ registerUrl }: { registerUrl: string }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
       <p className="text-sm text-slate-500">
-        La registrazione avviene sul portale StartingLine: una volta creato l&apos;account potrai accedere a TasteBoard con le stesse credenziali.
+        La registrazione avviene sul portale Nuviio: una volta creato l&apos;account potrai accedere a TasteBoard con le stesse credenziali.
       </p>
       <div className="space-y-2">
         <Label htmlFor="restaurant">Nome Attività</Label>

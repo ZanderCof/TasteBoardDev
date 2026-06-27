@@ -15,7 +15,7 @@ export default async function LoginPage() {
   return (
     <AuthLayout 
       title="Bentornato!" 
-      subtitle="Accedi tramite il tuo account StartingLine per gestire il tuo locale."
+      subtitle="Accedi tramite il tuo account Nuviio per gestire il tuo locale."
     >
       <LoginForm />
     </AuthLayout>

@@ -6,7 +6,7 @@ export default function ComingSoonPage() {
       <ComingSoonPlaceholder featureName="Questa sezione" />
       {/* Opzionale: un tasto per tornare indietro se si sentono persi */}
       <p className="mt-8 text-slate-400 text-sm">
-        Stiamo lavorando duramente per StartingLine.
+        Stiamo lavorando duramente per Nuviio.
       </p>
     </div>
   );

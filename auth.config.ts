@@ -11,7 +11,7 @@ export const authConfig = {
     }),
     Credentials({
       async authorize(credentials) {
-        const res = await fetch(`${process.env.STARTINGLINE_HUB_URL}/api/external/validate-tasteboard`, {
+        const res = await fetch(`${process.env.NUVIIO_HUB_URL}/api/external/validate-tasteboard`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -22,7 +22,7 @@ export const authConfig = {
         });
 
         const data = await res.json();
-        console.log("Dati ricevuti da StartingLine:", data);
+        console.log("Dati ricevuti da Nuviio:", data);
         if (res.ok && data.success) return data.user;
         return null;
       },

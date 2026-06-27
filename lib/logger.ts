@@ -1,7 +1,7 @@
 import { syncAppLogToHub } from "@/lib/hub-sync";
 
 // Logger applicativo server-side: stampa in console (comportamento attuale)
-// e inoltra all'hub StartingLine per la visibilità nel pannello admin centrale.
+// e inoltra all'hub Nuviio per la visibilità nel pannello admin centrale.
 // Non usare lato client: il secret condiviso non deve mai arrivare al browser.
 
 function serializeError(error: unknown) {

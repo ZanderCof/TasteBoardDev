@@ -19,7 +19,7 @@ export default function Footer() {
       title: "Risorse",
       links: [
         { name: "Guida alla configurazione", href: "#/guide" },
-        { name: "StartingLine", href: "https://startingline-gamma.vercel.app/" },
+        { name: "Nuviio", href: "https://nuviio-liard.vercel.app/" },
         { name: "Assistenza", href: "#" },
       ],
     },
@@ -90,12 +90,12 @@ export default function Footer() {
         {/* BOTTOM BAR */}
         <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-400 text-[10px] font-bold uppercase tracking-tight">
-            © {currentYear} Tasteboard è un prodotto StartingLine. Tutti i diritti riservati.
+            © {currentYear} Tasteboard è un prodotto Nuviio. Tutti i diritti riservati.
           </p>
           <div className="flex items-center gap-6 text-xs font-bold text-slate-400">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-blue-600" />
-              hello@startingline.it
+              hello@nuviio.it
             </div>
             <div className="flex items-center gap-2 text-slate-900 bg-yellow-400/20 px-3 py-1.5 rounded-full border border-yellow-400/30">
               <span className="w-1.5 h-1.5 bg-red-700 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />

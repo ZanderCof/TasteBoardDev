@@ -53,9 +53,9 @@ export async function saveBusinessAction(userId: string, data: OnboardingData) {
       },
     });
 
-    // 2. Sincronizzazione Hub (StartingLine)
+    // 2. Sincronizzazione Hub (Nuviio)
     try {
-      await fetch(`${process.env.STARTINGLINE_HUB_URL}/api/external/update-business`, {
+      await fetch(`${process.env.NUVIIO_HUB_URL}/api/external/update-business`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

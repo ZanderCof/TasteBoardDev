@@ -1,11 +1,13 @@
 // app/(account)/(dashboard)/dashboard/bookings/page.tsx
 import prisma from "@/lib/prisma";
 import { format, addDays, startOfToday } from "date-fns";
+import { it } from "date-fns/locale";
 import { ReservationStats } from "@/components/my_components/reservation/ReservationStats";
 import { AddReservationDialog } from "@/components/my_components/reservation/AddReservationDialog";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { BookingsViewer } from "@/components/my_components/reservation/Bookingsviewer";
+import { TableAvailabilityChecker } from "@/components/my_components/reservation/Tableavailabilitychecker";
 
 type PageProps = {
   searchParams: Promise<{ restaurantId?: string }>;
@@ -14,7 +16,6 @@ type PageProps = {
 export default async function BookingsPage({ searchParams }: PageProps) {
   const { restaurantId: restaurantParam } = await searchParams;
   const session = await auth();
-
   if (!session?.user?.id) redirect("/login");
 
   let currentRestaurantId = restaurantParam;
@@ -48,10 +49,10 @@ export default async function BookingsPage({ searchParams }: PageProps) {
     }),
   ]);
 
-  // Raggruppa prenotazioni per giorno
+  // Raggruppa per giorno (timezone-safe)
   const bookingsByDay = bookings.reduce<Record<string, typeof bookings>>(
     (acc, booking) => {
-      const key = new Date(booking.date).toISOString().split("T")[0];
+      const key = format(new Date(booking.date), "yyyy-MM-dd");
       if (!acc[key]) acc[key] = [];
       acc[key].push(booking);
       return acc;
@@ -59,7 +60,6 @@ export default async function BookingsPage({ searchParams }: PageProps) {
     {}
   );
 
-  // Tavoli occupati per giorno
   const occupiedByDay = Object.fromEntries(
     Object.entries(bookingsByDay).map(([day, dayBookings]) => [
       day,
@@ -67,43 +67,66 @@ export default async function BookingsPage({ searchParams }: PageProps) {
     ])
   );
 
-  // Array dei 8 giorni (oggi + 7)
   const days = Array.from({ length: 8 }, (_, i) => {
     const d = addDays(today, i);
-    const key = d.toISOString().split("T")[0];
+    const key = format(d, "yyyy-MM-dd");
     return { date: d, key, bookings: bookingsByDay[key] ?? [] };
   });
 
-  const todayKey = today.toISOString().split("T")[0];
+  const todayKey     = format(today, "yyyy-MM-dd");
   const todayOccupied = occupiedByDay[todayKey] ?? [];
+  const todayLabel   = format(today, "EEEE d MMMM", { locale: it });
 
   return (
-    <div className="p-8 bg-slate-50 min-h-screen space-y-8">
-      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase">
-            Gestione <span className="text-red-600">Prenotazioni</span>
-          </h1>
-          <p className="text-muted-foreground font-medium">
-            Prossimi 7 giorni · TasteBoard
-          </p>
-        </div>
-        <AddReservationDialog
-          restaurantId={currentRestaurantId}
-          tables={allTables}
-          currentSelectedDate={today}
-          occupiedTableIds={todayOccupied}
+    <div className="min-h-screen bg-[#F8F7F5]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        {/* ── HEADER ─────────────────────────────────────────────────────── */}
+        <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div>
+            {/* Data oggi come sopratitolo */}
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-red-500 mb-1 capitalize">
+              {todayLabel}
+            </p>
+            <h1 className="text-3xl font-black tracking-tight text-slate-900 leading-none">
+              Prenotazioni
+            </h1>
+            <p className="text-sm text-slate-500 font-medium mt-1.5">
+              Prossimi 7 giorni · aggiornato in tempo reale
+            </p>
+          </div>
+
+          <AddReservationDialog
+            restaurantId={currentRestaurantId}
+            tables={allTables}
+            currentSelectedDate={today}
+            occupiedTableIds={todayOccupied}
+          />
+        </header>
+
+        {/* ── KPI STATS ──────────────────────────────────────────────────── */}
+        <ReservationStats
+          bookings={bookings}
+          totalTablesCount={totalTablesCount}
         />
-      </header>
 
-      <ReservationStats bookings={bookings} totalTablesCount={totalTablesCount} />
+        {/* ── MAIN LAYOUT: viewer + checker sidebar ──────────────────────── */}
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6 items-start">
 
-      {/* Nuovo viewer con select giorno */}
-      <BookingsViewer
-        days={days}
-        allTables={allTables}
-        occupiedByDay={occupiedByDay}
-      />
+          {/* Viewer prenotazioni */}
+          <BookingsViewer
+            days={days}
+            allTables={allTables}
+            occupiedByDay={occupiedByDay}
+          />
+
+          {/* Sidebar checker — sticky su desktop */}
+          <div className="xl:sticky xl:top-6">
+            <TableAvailabilityChecker restaurantId={currentRestaurantId} />
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }

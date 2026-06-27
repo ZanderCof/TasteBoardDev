@@ -1,7 +1,7 @@
 // components/my_components/reservation/ReservationStats.tsx
 import { Status } from "@prisma/client";
+import { Users, Clock, LayoutGrid } from "lucide-react";
 
-// Definiamo un tipo leggero per quello che serve al componente
 type BookingStatInput = {
   guests: number;
   status: Status;
@@ -10,55 +10,85 @@ type BookingStatInput = {
 
 interface ReservationStatsProps {
   bookings: BookingStatInput[];
-  totalTablesCount?: number; // Passato dal server per calcolare i tavoli liberi
+  totalTablesCount?: number;
 }
 
 export function ReservationStats({ bookings, totalTablesCount = 0 }: ReservationStatsProps) {
-  
-  // 1. Calcola il totale degli ospiti confermati per oggi
-  const totaleOspiti = bookings
-    .filter((b) => b.status === "CONFIRMED")
-    .reduce((sum, b) => sum + b.guests, 0);
+  const confirmed = bookings.filter((b) => b.status === "CONFIRMED");
+  const pending = bookings.filter((b) => b.status === "PENDING");
 
-  // 2. Conta quante prenotazioni sono ancora in attesa
-  const inAttesa = bookings.filter((b) => b.status === "PENDING").length;
+  const totaleOspiti = confirmed.reduce((sum, b) => sum + b.guests, 0);
+  const inAttesa = pending.length;
 
-  // 3. Calcola i tavoli occupati (estraiamo i tableId univoci delle prenotazioni confermate)
-  const tavoliOccupatiIds = new Set(
-    bookings
-      .filter((b) => b.status === "CONFIRMED" && b.tableId)
-      .map((b) => b.tableId)
-  );
-  
-  const numeroTavoliOccupati = tavoliOccupatiIds.size;
-  
-  // Se conosciamo il totale dei tavoli del locale facciamo la sottrazione, 
-  // altrimenti mostriamo semplicemente quanti sono occupati.
+  const tavoliOccupati = new Set(
+    confirmed.filter((b) => b.tableId).map((b) => b.tableId)
+  ).size;
+
+  const tavoliLiberi = Math.max(0, totalTablesCount - tavoliOccupati);
   const mostraTavoliLiberi = totalTablesCount > 0;
-  const tavoliLiberi = Math.max(0, totalTablesCount - numeroTavoliOccupati);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-      {/* CARD: TOTALE OSPITI */}
-      <div className="bg-white p-4 rounded-xl border-b-4 border-red-600 shadow-sm">
-        <p className="text-sm text-muted-foreground uppercase font-bold">Totale Ospiti (Confermati)</p>
-        <h3 className="text-3xl font-black text-red-600">{totaleOspiti}</h3>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      
+      {/* Ospiti confermati */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex items-center gap-4">
+        <div className="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+          <Users className="h-5 w-5 text-red-600" />
+        </div>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            Ospiti confermati
+          </p>
+          <p className="text-3xl font-black text-slate-900 leading-none mt-0.5">
+            {totaleOspiti}
+          </p>
+          <p className="text-xs text-slate-400 font-medium mt-0.5">
+            {confirmed.length} prenotazioni confermate
+          </p>
+        </div>
       </div>
 
-      {/* CARD: IN ATTESA */}
-      <div className="bg-white p-4 rounded-xl border-b-4 border-yellow-400 shadow-sm">
-        <p className="text-sm text-muted-foreground uppercase font-bold">In Attesa</p>
-        <h3 className="text-3xl font-black text-yellow-500">{inAttesa}</h3>
+      {/* In attesa */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex items-center gap-4">
+        <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+          <Clock className="h-5 w-5 text-amber-500" />
+        </div>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            In attesa
+          </p>
+          <div className="flex items-end gap-2 mt-0.5">
+            <p className="text-3xl font-black text-slate-900 leading-none">{inAttesa}</p>
+            {inAttesa > 0 && (
+              <span className="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-100 rounded-md px-1.5 py-0.5 mb-0.5">
+                da confermare
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-slate-400 font-medium mt-0.5">
+            {pending.reduce((s, b) => s + b.guests, 0)} ospiti in attesa
+          </p>
+        </div>
       </div>
 
-      {/* CARD: TAVOLI LIBERI / OCCUPATI */}
-      <div className="bg-white p-4 rounded-xl border-b-4 border-slate-200 shadow-sm">
-        <p className="text-sm text-muted-foreground uppercase font-bold">
-          {mostraTavoliLiberi ? "Tavoli Liberi" : "Tavoli Occupati"}
-        </p>
-        <h3 className="text-3xl font-black text-slate-800">
-          {mostraTavoliLiberi ? tavoliLiberi : numeroTavoliOccupati}
-        </h3>
+      {/* Tavoli */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex items-center gap-4">
+        <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
+          <LayoutGrid className="h-5 w-5 text-slate-600" />
+        </div>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            {mostraTavoliLiberi ? "Tavoli liberi" : "Tavoli occupati"}
+          </p>
+          <p className="text-3xl font-black text-slate-900 leading-none mt-0.5">
+            {mostraTavoliLiberi ? tavoliLiberi : tavoliOccupati}
+          </p>
+          {mostraTavoliLiberi && (
+            <p className="text-xs text-slate-400 font-medium mt-0.5">
+              {tavoliOccupati} occupati su {totalTablesCount}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

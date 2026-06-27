@@ -1,14 +1,17 @@
-// components/my_components/dashboard/DashboardKpiGrid.tsx
 "use client";
 
-import { QuickStatCard } from "@/components/my_components/dashboard/QuickStatCard ";
-import { Clock, CalendarCheck, Armchair, Star } from "lucide-react";
+import Link from "next/link";
+import { Clock, CalendarCheck, Armchair, LayoutGrid } from "lucide-react";
+import { QuickStatCard } from "./QuickStatCard ";
 
 interface DashboardKpiGridProps {
   pendingCount: number;
   todayBookingsCount: number;
   totalCoversToday: number;
   tablesCount: number;
+  occupancy: number;
+  totalDishes: number;
+  hasMenu: boolean;
 }
 
 export function DashboardKpiGrid({
@@ -16,45 +19,63 @@ export function DashboardKpiGrid({
   todayBookingsCount,
   totalCoversToday,
   tablesCount,
+  occupancy,
+  totalDishes,
+  hasMenu,
 }: DashboardKpiGridProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 p-4 rounded-[3rem] border border-slate-100 bg-slate-400/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_10px_40px_-15px_rgba(0,0,0,0.1)]">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
       <QuickStatCard
-        label="Da Approvare"
+        label="Da Confermare"
         value={pendingCount}
         icon={Clock}
-        trend={pendingCount > 0 ? "Urgente" : "In pari"}
+        trend={
+          pendingCount === 0
+            ? "Tutto gestito"
+            : `${pendingCount} in attesa`
+        }
         trendType={pendingCount > 0 ? "down" : "neutral"}
         color="amber"
-        description="Richiedono conferma"
+        description="Prenotazioni da controllare"
       />
+
       <QuickStatCard
         label="Prenotazioni Oggi"
         value={todayBookingsCount}
         icon={CalendarCheck}
-        trend={todayBookingsCount > 0 ? `+${todayBookingsCount}` : "Nessuna"}
-        trendType={todayBookingsCount > 0 ? "up" : "neutral"}
-        color="indigo"
-        description="Confermate per oggi"
+        trend={`${totalCoversToday} coperti`}
+        trendType="up"
+        color="red"
+        description="Prenotazioni confermate"
       />
+
       <QuickStatCard
-        label="Coperti Oggi"
-        value={totalCoversToday}
+        label="Occupazione"
+        value={`${occupancy}%`}
         icon={Armchair}
-        trend={tablesCount > 0 ? `${tablesCount} tavoli` : "Nessun tavolo"}
+        trend={`${tablesCount} tavoli`}
         trendType="neutral"
-        color="violet"
-        description="Ospiti previsti"
+        color="slate"
+        description="Capacità prevista"
       />
-      <QuickStatCard
-        label="Rating Medio"
-        value="—"
-        icon={Star}
-        trend="Presto"
-        trendType="neutral"
-        color="emerald"
-        description="Recensioni in arrivo"
-      />
+
+      {/* CARD NAVIGABILE */}
+      <Link
+        href="/dashboard/menu"
+        className="block rounded-[2rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+      >
+        <QuickStatCard
+          label="Menu Online"
+          value={totalDishes}
+          icon={LayoutGrid}
+          trend={hasMenu ? "Pubblicato" : "Offline"}
+          trendType={hasMenu ? "up" : "down"}
+          color="emerald"
+          description="Piatti disponibili"
+        />
+      </Link>
+
     </div>
   );
 }

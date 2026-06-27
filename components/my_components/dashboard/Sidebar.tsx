@@ -17,6 +17,8 @@ import {
   TicketPercent,
   Contact2,
   Sofa,
+  MessageCircle,
+  LifeBuoy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
@@ -39,6 +41,13 @@ const navigation = [
       },
 
       { icon: Utensils, label: "Menù Digitale", href: "/dashboard/menu" },
+    ],
+  },
+  {
+    group: "Feedback",
+    items: [
+      { icon: MessageCircle , label: "Invia Feedback", href: "/dashboard/feedback" },
+      { icon: LifeBuoy, label: "Assistenza", href: "/dashboard/support" },
     ],
   },
   {
@@ -98,14 +107,15 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
               Taste<span className="text-red-600 font-black">board</span>
             </span>
             <span className="text-[10px] text-slate-900 font-black tracking-widest uppercase">
-              Business Suite
+              Beta Testing V 1.0
             </span>
           </div>
         </Link>
 
         <button
           onClick={onClose}
-          className="lg:hidden p-2 text-slate-900 bg-slate-100 rounded-xl border border-slate-200"
+          aria-label="Chiudi menu"
+          className="lg:hidden p-2 text-slate-900 bg-slate-100 rounded-xl border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
         >
           <X size={20} strokeWidth={3} />
         </button>
@@ -127,7 +137,10 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
                 return (
                   <div key={item.href}>
                     {isComingSoon ? (
-                      <div className="group flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-bold opacity-40 grayscale border border-transparent">
+                      <div
+                        aria-disabled="true"
+                        className="group flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-bold opacity-60 cursor-not-allowed border border-transparent"
+                      >
                         <div className="flex items-center gap-3">
                           <item.icon size={20} strokeWidth={2.5} />
                           {item.label}
@@ -140,8 +153,9 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
                       <Link
                         href={item.href}
                         onClick={onClose}
+                        aria-current={isActive ? "page" : undefined}
                         className={cn(
-                          "group flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 border-2",
+                          "group flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
                           isActive
                             ? "bg-slate-900 border-slate-900 text-white shadow-xl shadow-slate-300"
                             : "bg-white border-slate-100 text-slate-800 hover:border-red-600 hover:text-red-600",
@@ -180,7 +194,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           <Link
             href="/dashboard/settings"
             onClick={onClose}
-            className="flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-bold text-slate-900 bg-slate-100 hover:bg-slate-900 hover:text-white transition-all border border-slate-200"
+            className="flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-bold text-slate-900 bg-slate-100 hover:bg-slate-900 hover:text-white transition-all border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
           >
             <Settings size={20} strokeWidth={2.5} />
             Impostazioni
@@ -189,7 +203,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-bold text-red-600 bg-red-50 border-2 border-red-100 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all disabled:opacity-50"
+            className="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-bold text-red-600 bg-red-50 border-2 border-red-100 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
           >
             <LogOut size={20} strokeWidth={2.5} />
             {isLoggingOut ? "Uscita..." : "Logout"}

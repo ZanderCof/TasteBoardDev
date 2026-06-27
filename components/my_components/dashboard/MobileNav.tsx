@@ -13,9 +13,11 @@ export default function MobileNav() {
     <>
       <header className="lg:hidden h-16 flex items-center justify-between px-6 bg-white border-b border-slate-200 shrink-0">
         <span className="font-black text-slate-900 tracking-tighter">Tasteboard.</span>
-        <button 
+        <button
           onClick={() => setIsMobileMenuOpen(true)}
-          className="p-2 bg-slate-50 rounded-xl border border-slate-200"
+          aria-label="Apri menu"
+          aria-expanded={isMobileMenuOpen}
+          className="p-2 bg-slate-50 rounded-xl border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
         >
           <Menu size={20} />
         </button>

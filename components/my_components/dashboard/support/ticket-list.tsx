@@ -140,19 +140,9 @@ function TicketRow({ ticket, defaultOpen }: { ticket: HubTicketDetail; defaultOp
 
 export function TicketList({
   tickets,
-  error,
 }: {
   tickets: HubTicketDetail[];
-  error?: string;
 }) {
-  if (error) {
-    return (
-      <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-2xl p-4">
-        Non è stato possibile recuperare i ticket in questo momento. {error}
-      </p>
-    );
-  }
-
   if (tickets.length === 0) {
     return <p className="text-slate-400 text-sm">Non hai ancora aperto nessun ticket.</p>;
   }

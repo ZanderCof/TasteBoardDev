@@ -30,7 +30,6 @@ export default async function SupportPage({ searchParams }: PageProps) {
       <SupportView
         restaurantId={currentRestaurantId}
         tickets={ticketsResult.success ? ticketsResult.tickets : []}
-        error={ticketsResult.success ? undefined : ticketsResult.error}
       />
     </div>
   );

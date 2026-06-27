@@ -10,11 +10,9 @@ import type { HubTicketDetail } from "@/lib/hub-sync";
 export function SupportView({
   restaurantId,
   tickets,
-  error,
 }: {
   restaurantId: string;
   tickets: HubTicketDetail[];
-  error?: string;
 }) {
   const [tab, setTab] = useState<"list" | "new">("list");
 
@@ -68,7 +66,7 @@ export function SupportView({
         <SupportForm restaurantId={restaurantId} onCreated={() => setTab("list")} />
       ) : (
         <div className="bg-white rounded-[2rem] shadow-xl border border-slate-100 p-6 sm:p-8">
-          <TicketList tickets={tickets} error={error} />
+          <TicketList tickets={tickets} />
         </div>
       )}
     </div>

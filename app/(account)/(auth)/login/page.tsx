@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { auth } from "@/auth"; // Importi direttamente la funzione auth
 import { redirect } from "next/navigation";
 import { AuthLayout } from "@/components/my_components/auth/auth-layout";
@@ -13,11 +14,13 @@ export default async function LoginPage() {
   }
 
   return (
-    <AuthLayout 
-      title="Bentornato!" 
+    <AuthLayout
+      title="Bentornato!"
       subtitle="Accedi tramite il tuo account Nuviio per gestire il tuo locale."
     >
-      <LoginForm />
+      <Suspense>
+        <LoginForm />
+      </Suspense>
     </AuthLayout>
   );
 }

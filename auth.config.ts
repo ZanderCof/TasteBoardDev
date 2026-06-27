@@ -30,6 +30,10 @@ export const authConfig = {
   ],
   pages: {
     signIn: "/login",
+    // Senza questo, AccessDenied (es. signIn callback di Google che nega
+    // l'accesso) mostra la pagina di errore generica di Auth.js invece di
+    // tornare al login con il messaggio gestito da LoginForm.
+    error: "/login",
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {

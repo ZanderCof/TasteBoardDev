@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "@/lib/activity-log";
+import { logError } from "@/lib/logger";
 
 // Interfaccia per la creazione
 interface CreateStoreInput {
@@ -53,10 +55,18 @@ export async function createStore(data: CreateStoreInput) {
 
     // Aggiorna la cache delle pagine che mostrano la lista locali
     revalidatePath("/dashboard");
-    
+
+    await logActivity({
+      action: "restaurant.create",
+      userId,
+      userEmail: session.user.email,
+      restaurantId: newStore.id,
+      metadata: { name: newStore.name },
+    });
+
     return { success: true, data: newStore };
   } catch (error) {
-    console.error("Errore creazione store:", error);
+    await logError("tasteboard-store", "Errore creazione locale", error);
     return { success: false, error: "Non è stato possibile creare il locale. Riprova." };
   }
 }

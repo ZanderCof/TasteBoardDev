@@ -11,7 +11,7 @@ export const authConfig = {
     }),
     Credentials({
       async authorize(credentials) {
-        const res = await fetch("http://localhost:3001/api/external/validate-tasteboard", {
+        const res = await fetch(`${process.env.STARTINGLINE_HUB_URL}/api/external/validate-tasteboard`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

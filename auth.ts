@@ -2,6 +2,7 @@
 import NextAuth from "next-auth";
 import { authConfig } from "./auth.config";
 import prisma from "@/lib/prisma";
+import { logActivity } from "@/lib/activity-log";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
@@ -10,6 +11,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id as string;
+        await logActivity({
+          action: "auth.login",
+          userId: user.id as string,
+          userEmail: user.email,
+        });
       }
 
       // Controllo database locale (Node.js runtime)

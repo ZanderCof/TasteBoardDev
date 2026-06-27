@@ -3,7 +3,9 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth"; // Assicurati di avere l'auth importato
-import { Category, Dish } from "./useMenuStore"; 
+import { Category, Dish } from "./useMenuStore";
+import { logActivity } from "@/lib/activity-log";
+import { logError } from "@/lib/logger";
 
 export async function createMenuAction(data: {
   name: string;
@@ -22,8 +24,8 @@ export async function createMenuAction(data: {
     if (!restaurant) throw new Error("Ristorante non trovato. Completa l'onboarding.");
 
     // 3. Creiamo il menu usando l'ID reale
-    await prisma.$transaction(async (tx) => {
-      await tx.menu.create({
+    const menu = await prisma.$transaction(async (tx) => {
+      return await tx.menu.create({
         data: {
           name: data.name,
           restaurantId: restaurant.id,
@@ -45,9 +47,19 @@ export async function createMenuAction(data: {
     });
 
     revalidatePath("/dashboard/menu");
+
+    await logActivity({
+      action: "menu.create",
+      userId: session.user.id,
+      userEmail: session.user.email,
+      restaurantId: restaurant.id,
+      entityId: menu.id,
+      metadata: { name: menu.name, categoriesCount: data.categories.length },
+    });
+
     return { success: true };
   } catch (error) {
-    console.error("Errore Action:", error);
+    await logError("tasteboard-menu", "Errore creazione menu", error);
     return { success: false, error: "Errore durante il salvataggio" };
   }
 }

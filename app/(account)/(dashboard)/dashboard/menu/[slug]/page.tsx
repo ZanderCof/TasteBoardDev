@@ -1,18 +1,21 @@
 // app/(account)/(dashboard)/dashboard/menu/[slug]/page.tsx
 import prisma from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Edit3, Eye, Calendar, Sparkles, } from "lucide-react";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { MenuQRCode } from "@/components/my_components/QRcode/MenuQRCode";
+import { auth } from "@/auth";
 
 export default async function OwnerMenuViewPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const session = await auth();
+  if (!session?.user?.id) redirect("/login");
 
-  // 1. Recupero dati reali dal DB
-  const menu = await prisma.menu.findUnique({
-    where: { id: slug },
+  // 1. Recupero dati reali dal DB, solo se il menu appartiene all'utente loggato
+  const menu = await prisma.menu.findFirst({
+    where: { id: slug, restaurant: { userId: session.user.id } },
     include: {
       restaurant: true,
       _count: { select: { categories: true } },

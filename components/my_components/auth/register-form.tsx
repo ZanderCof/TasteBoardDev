@@ -6,24 +6,27 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-export function RegisterForm() {
+export function RegisterForm({ registerUrl }: { registerUrl: string }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+      <p className="text-sm text-slate-500">
+        La registrazione avviene sul portale StartingLine: una volta creato l&apos;account potrai accedere a TasteBoard con le stesse credenziali.
+      </p>
       <div className="space-y-2">
         <Label htmlFor="restaurant">Nome Attività</Label>
-        <Input id="restaurant" placeholder="es. Pizzeria Bella Napoli" className="h-12 border-slate-200" />
+        <Input id="restaurant" placeholder="es. Pizzeria Bella Napoli" className="h-12 border-slate-200" disabled />
       </div>
       <div className="space-y-2">
         <Label htmlFor="email">Email Professionale</Label>
-        <Input id="email" type="email" placeholder="contatto@ristorante.it" className="h-12 border-slate-200" />
+        <Input id="email" type="email" placeholder="contatto@ristorante.it" className="h-12 border-slate-200" disabled />
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" placeholder="Minimo 8 caratteri" className="h-12 border-slate-200" />
+        <Input id="password" type="password" placeholder="Minimo 8 caratteri" className="h-12 border-slate-200" disabled />
       </div>
       <div className="pt-4">
-        <Button className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-bold text-lg rounded-xl shadow-lg shadow-red-100">
-          Crea account gratis
+        <Button asChild className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-bold text-lg rounded-xl shadow-lg shadow-red-100">
+          <a href={registerUrl}>Crea account gratis</a>
         </Button>
       </div>
       <p className="text-center text-sm text-slate-500">

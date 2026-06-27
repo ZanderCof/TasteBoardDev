@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { logError } from "@/lib/logger";
 
 // Definiamo il tipo dell'oggetto che arriva dal client
 interface OnboardingData {
@@ -21,6 +22,11 @@ export async function saveBusinessAction(userId: string, data: OnboardingData) {
 
   if (!data.businessName) {
     return { success: false, error: "Il nome del locale è obbligatorio." };
+  }
+
+  const MAX_LOGO_BASE64_SIZE = 4 * 1024 * 1024; // ~3MB di file originale
+  if (data.logo && data.logo.length > MAX_LOGO_BASE64_SIZE) {
+    return { success: false, error: "Il logo è troppo grande (max 3MB)." };
   }
 
   try {
@@ -49,7 +55,7 @@ export async function saveBusinessAction(userId: string, data: OnboardingData) {
 
     // 2. Sincronizzazione Hub (StartingLine)
     try {
-      await fetch("http://localhost:3001/api/external/update-business", {
+      await fetch(`${process.env.STARTINGLINE_HUB_URL}/api/external/update-business`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -59,14 +65,14 @@ export async function saveBusinessAction(userId: string, data: OnboardingData) {
         }),
       });
     } catch (e) {
-      console.error("Hub non raggiungibile");
+      await logError("tasteboard-onboarding", "Hub non raggiungibile durante la sincronizzazione del locale", e, { userId });
     }
 
     revalidatePath("/dashboard");
     return { success: true };
-    
+
   } catch (error) {
-    console.error("Errore Prisma:", error);
+    await logError("tasteboard-onboarding", "Errore creazione locale in onboarding", error, { userId });
     return { success: false, error: "Errore durante la creazione." };
   }
 }

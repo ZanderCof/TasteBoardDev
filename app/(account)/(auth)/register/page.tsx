@@ -5,12 +5,14 @@ import { RegisterForm } from "@/components/my_components/auth/register-form";
 
 
 export default function LoginPage() {
+  const registerUrl = `${process.env.STARTINGLINE_HUB_URL}/register`;
+
   return (
-    <AuthLayout 
-      title="Benvenuto!" 
+    <AuthLayout
+      title="Benvenuto!"
       subtitle="Accedi per gestire il tuo locale."
     >
-      <RegisterForm />
+      <RegisterForm registerUrl={registerUrl} />
     </AuthLayout>
   );
 }

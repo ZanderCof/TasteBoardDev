@@ -22,18 +22,25 @@ export function StepInfo({
   updateFields,
 }: StepInfoProps) {
   const [image, setImage] = useState<string | null>(null);
+  const MAX_LOGO_SIZE = 3 * 1024 * 1024; // 3MB: in base64 diventa ~4MB, entro il bodySizeLimit della Server Action
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setImage(base64);
-        updateFields({ logo: base64 }); // Passiamo il logo al padre
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    if (file.size > MAX_LOGO_SIZE) {
+      alert("Il logo è troppo grande (max 3MB). Scegli una foto più leggera o comprimila prima di caricarla.");
+      e.target.value = "";
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setImage(base64);
+      updateFields({ logo: base64 }); // Passiamo il logo al padre
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -98,7 +105,7 @@ export function StepInfo({
           )}
         </div>
         <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
-          Consigliato: Quadrato 500x500px
+          Consigliato: Quadrato 500x500px · Max 3MB
         </p>
       </div>
 

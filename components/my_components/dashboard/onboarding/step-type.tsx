@@ -19,7 +19,7 @@ export function StepType({ type, updateFields }: StepTypeProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center mb-8">
-        <h2 className="text-3xl font-black text-slate-900 tracking-tight">Che tipo di locale gestisci?</h2>
+        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Che tipo di locale gestisci?</h2>
         <p className="text-slate-500">Questo ci aiuterà a configurare il tuo menu iniziale.</p>
       </div>
 
@@ -33,7 +33,7 @@ export function StepType({ type, updateFields }: StepTypeProps) {
               type="button"
               onClick={() => updateFields({ type: item.label })}
               className={cn(
-                "flex flex-col items-center gap-4 p-6 rounded-[2rem] border-2 transition-all group",
+                "flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-6 rounded-[2rem] border-2 transition-all group",
                 isSelected 
                   ? "border-red-600 bg-red-50/50 shadow-md scale-[1.02]" 
                   : "border-slate-50 hover:border-red-200 hover:bg-slate-50"

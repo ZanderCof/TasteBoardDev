@@ -10,7 +10,7 @@ import bgImage from "@/public/image/bg-coming-soon-page.jpg";
 
 export default function QueuePage() {
   return (
-    <main className="min-h-screen bg-[#FAFAFA] text-slate-900 relative flex flex-col items-center justify-center px-6 overflow-hidden">
+    <main className="min-h-screen bg-[#FAFAFA] text-slate-900 relative flex flex-col items-center justify-center px-4 sm:px-6 overflow-hidden">
       {/* ================= BACKGROUND LAYER ================= */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -38,15 +38,15 @@ export default function QueuePage() {
 
       {/* ================= NAVIGATION ================= */}
       <header className="absolute top-0 left-0 w-full z-30">
-        <div className="max-w-7xl mx-auto px-8 py-10 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8 md:py-10 flex flex-wrap items-center justify-between gap-3">
             <Image
               src={TasteBoardLogo}
               width={150}
               height={45}
               alt="TasteBoard"
-              className="drop-shadow-sm"
+              className="drop-shadow-sm w-27.5 sm:w-32.5 md:w-37.5 h-auto"
             />
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white shadow-sm border border-red-100/50 text-[11px] text-red-600 font-bold uppercase tracking-[0.15em]">
+          <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-white shadow-sm border border-red-100/50 text-[10px] sm:text-[11px] text-red-600 font-bold uppercase tracking-[0.15em]">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
@@ -61,7 +61,7 @@ export default function QueuePage() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 max-w-4xl w-full bg-white/70 backdrop-blur-[32px] border border-white p-8 md:p-20 rounded-[3rem] shadow-[0_32px_120px_-20px_rgba(0,0,0,0.08)] text-center"
+        className="relative z-10 max-w-4xl w-full bg-white/70 backdrop-blur-[32px] border border-white p-4 sm:p-8 md:p-20 rounded-[2rem] sm:rounded-[3rem] shadow-[0_32px_120px_-20px_rgba(0,0,0,0.08)] text-center"
       >
         {/* Badge Early Access */}
         <motion.div
@@ -75,7 +75,7 @@ export default function QueuePage() {
         </motion.div>
 
         {/* Title con gradiente moderno */}
-        <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] mb-8">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter leading-[0.85] mb-8">
           Ridisegniamo la <br />
           <span className="bg-linear-to-br from-red-600 via-red-500 to-yellow-500 text-transparent bg-clip-text">
             ristorazione
@@ -83,7 +83,7 @@ export default function QueuePage() {
         </h1>
 
         {/* Subtitle */}
-        <p className="text-slate-500 text-lg md:text-2xl max-w-2xl mx-auto leading-relaxed mb-12">
+        <p className="text-slate-500 text-base sm:text-lg md:text-2xl max-w-2xl mx-auto leading-relaxed mb-12">
           L&apos;ecosistema intelligente per locali che puntano
           all&apos;eccellenza.
           <span className="text-slate-900 font-medium block mt-2 underline decoration-yellow-400 decoration-2 underline-offset-4">
@@ -92,7 +92,7 @@ export default function QueuePage() {
         </p>
 
         {/* Form & Countdown Section */}
-        <div className="space-y-12 bg-slate-50/50 p-8 rounded-[2rem] border border-slate-100">
+        <div className="space-y-8 sm:space-y-12 bg-slate-50/50 p-4 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-100">
           <BetaCountdown />
           <div className="max-w-md mx-auto">
             <BetaForm />
@@ -100,7 +100,7 @@ export default function QueuePage() {
         </div>
 
         {/* Status Bar */}
-        <div className="mt-12 pt-8 flex items-center justify-center gap-8 md:gap-16 border-t border-slate-100">
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 md:gap-16 border-t border-slate-100">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-white shadow-inner flex items-center justify-center border border-slate-50">
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]" />

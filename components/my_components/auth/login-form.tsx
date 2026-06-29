@@ -70,6 +70,8 @@ export function LoginForm() {
               id="email"
               name="email"
               type="email"
+              inputMode="email"
+              autoComplete="email"
               required
               placeholder="nome@mail.it"
               className="h-12 border-slate-200 focus:border-red-600 focus:ring-red-600"
@@ -87,6 +89,7 @@ export function LoginForm() {
               id="password"
               name="password"
               type="password"
+              autoComplete="current-password"
               required
               className="h-12 border-slate-200 focus:border-red-600 focus:ring-red-600"
             />

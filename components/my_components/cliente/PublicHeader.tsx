@@ -23,7 +23,7 @@ export function PublicHeader({
       <div className="absolute -top-20 -right-20 w-64 h-64 bg-red-600/20 rounded-full blur-[80px]" />
       <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-red-600/10 rounded-full blur-[60px]" />
 
-      <div className="relative z-10 max-w-2xl mx-auto px-5 pt-10 pb-8 flex flex-col items-center text-center gap-4">
+      <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-5 pt-8 sm:pt-10 pb-6 sm:pb-8 flex flex-col items-center text-center gap-4">
         {/* Logo o icona fallback */}
         {logo ? (
           <div className="w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shadow-xl">
@@ -40,7 +40,7 @@ export function PublicHeader({
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-400 mb-1">
             Menu
           </p>
-          <h1 className="text-3xl font-black tracking-tighter text-white leading-none">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tighter text-white leading-none wrap-break-word">
             {restaurantName}
           </h1>
         </div>

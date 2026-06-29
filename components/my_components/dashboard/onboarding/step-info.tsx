@@ -46,7 +46,7 @@ export function StepInfo({
   return (
     <div className="space-y-8">
       <div className="space-y-2 text-center mb-4">
-        <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
           Benvenuto su <span className="text-red-600">Tasteboard</span>
         </h2>
         <p className="text-slate-500">
@@ -120,6 +120,7 @@ export function StepInfo({
             value={businessName}
             onChange={(e) => updateFields({ businessName: e.target.value })}
             placeholder="es. Pizzeria da Mario"
+            autoComplete="organization"
             className="h-12 rounded-xl border-slate-200 focus:ring-red-500 focus:border-red-500"
           />
         </div>
@@ -133,6 +134,7 @@ export function StepInfo({
             value={address}
             onChange={(e) => updateFields({ address: e.target.value })}
             placeholder="Via Roma 1, Milano"
+            autoComplete="street-address"
             className="h-12 rounded-xl border-slate-200 focus:ring-red-500 focus:border-red-500"
           />
         </div>

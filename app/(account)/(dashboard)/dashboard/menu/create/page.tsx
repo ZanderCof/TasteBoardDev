@@ -6,10 +6,10 @@ import { MenuBuilderHeader } from "@/components/my_components/dashboard/menu/cre
 export default function CreateMenuPage() {
 
   return (
-    <div className="space-y-10 max-w-375 mx-auto pb-20">
+    <div className="space-y-10 max-w-7xl mx-auto px-4 sm:px-6 pb-12 sm:pb-20">
       <MenuBuilderHeader />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
         <div className="lg:col-span-4">
           <CategorySidebar />
         </div>

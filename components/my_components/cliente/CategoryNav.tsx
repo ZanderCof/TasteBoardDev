@@ -74,7 +74,7 @@ export function CategoryNav({ categories }: { categories: Category[] }) {
               ref={(el) => { pillRefs.current[id] = el; }}
               onClick={() => scrollToSection(id)}
               className={cn(
-                "shrink-0 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-200 whitespace-nowrap",
+                "shrink-0 px-4 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-200 whitespace-nowrap",
                 active
                   ? "bg-slate-900 text-white shadow-sm shadow-slate-900/20"
                   : "bg-white text-slate-500 border border-slate-200 hover:border-slate-300 hover:text-slate-800"

@@ -45,7 +45,7 @@ export default async function AvailabilityPage({
       <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14">
 
         {/* ── Header ── */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-4">
             <Link
               href={`/dashboard/menu/${slug}/edit`}
@@ -63,7 +63,9 @@ export default async function AvailabilityPage({
             </div>
           </div>
 
-          <ResetAvailabilityButton menuId={menu.id} />
+          <div className="w-full sm:w-auto">
+            <ResetAvailabilityButton menuId={menu.id} />
+          </div>
         </div>
 
         {/* ── Stats bar ── */}

@@ -29,7 +29,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] text-slate-900"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] text-slate-900"
             >
               Il gusto di gestire bene con{" "}
               <span className="text-red-600 italic">Tasteboard</span>
@@ -49,12 +49,12 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
-              className="flex flex-wrap gap-4"
+              className="flex flex-col sm:flex-row gap-4"
             >
-              <Link href="/login">
+              <Link href="/login" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="bg-red-600 hover:bg-red-700 text-white px-8 h-14 text-lg shadow-lg shadow-red-200 transition-all hover:scale-105"
+                  className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-8 h-14 text-lg shadow-lg shadow-red-200 transition-all hover:scale-105"
                 >
                   Inizia gratis
                 </Button>
@@ -63,14 +63,14 @@ export default function Hero() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-slate-200 px-8 h-14 text-lg hover:bg-slate-50 transition-all"
+                className="w-full sm:w-auto border-slate-200 px-8 h-14 text-lg hover:bg-slate-50 transition-all"
               >
                 Guarda demo
               </Button>
             </motion.div>
 
             {/* Trust Badges */}
-            <div className="flex items-center gap-6 pt-4 text-slate-500">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-4 text-slate-500">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <CheckCircle2 className="text-red-500" size={18} /> QR Menu
                 Incluisi

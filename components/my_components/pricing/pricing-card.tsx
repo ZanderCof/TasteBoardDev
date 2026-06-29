@@ -34,7 +34,7 @@ export function PricingCard({ plan, index }: { plan: Plan; index: number }) {
       <div className="mb-8">
         <h3 className="text-xl font-bold mb-2 tracking-tight">{plan.name}</h3>
         <div className="flex items-baseline gap-1">
-          <span className={`text-5xl font-black italic ${plan.popular ? "text-yellow-400" : "text-red-600"}`}>
+          <span className={`text-4xl sm:text-5xl font-black italic ${plan.popular ? "text-yellow-400" : "text-red-600"}`}>
             €{plan.price}
           </span>
           <span className={plan.popular ? "text-slate-400" : "text-slate-500"}>/mese</span>

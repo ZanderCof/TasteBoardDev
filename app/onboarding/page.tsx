@@ -71,7 +71,7 @@ export default function OnboardingPage() {
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4">
+    <div className="min-h-screen bg-slate-50 py-8 sm:py-12 px-4">
       <OnboardingWrapper step={currentStep} totalSteps={totalSteps}>
         
         {currentStep === 1 && (
@@ -93,7 +93,7 @@ export default function OnboardingPage() {
                 <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                   <CheckCircle2 className="text-green-600" size={40} />
                 </div>
-                <h2 className="text-3xl font-black mb-4 tracking-tight text-slate-900">
+                <h2 className="text-2xl sm:text-3xl font-black mb-4 tracking-tight text-slate-900">
                   Creazione completata!
                 </h2>
                 <p className="text-slate-500 font-medium leading-relaxed max-w-sm mx-auto">
@@ -106,7 +106,7 @@ export default function OnboardingPage() {
                 <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                   <Loader2 className="text-yellow-600 animate-spin" size={40} />
                 </div>
-                <h2 className="text-3xl font-black mb-4 tracking-tight text-slate-900">
+                <h2 className="text-2xl sm:text-3xl font-black mb-4 tracking-tight text-slate-900">
                   Quasi pronto!
                 </h2>
                 <p className="text-slate-500 font-medium leading-relaxed max-w-sm mx-auto">
@@ -119,7 +119,7 @@ export default function OnboardingPage() {
                 <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                   <PartyPopper className="text-slate-700" size={40} />
                 </div>
-                <h2 className="text-3xl font-black mb-4 tracking-tight text-slate-900">
+                <h2 className="text-2xl sm:text-3xl font-black mb-4 tracking-tight text-slate-900">
                   Tutto pronto!
                 </h2>
                 <p className="text-slate-500 font-medium leading-relaxed max-w-sm mx-auto">
@@ -132,7 +132,7 @@ export default function OnboardingPage() {
         )}
 
         {!isSuccess && (
-          <div className="flex gap-4 mt-12">
+          <div className="flex gap-3 sm:gap-4 mt-8 sm:mt-12">
             {currentStep > 1 && !isLoading && (
               <div className="flex-1">
                 <Button

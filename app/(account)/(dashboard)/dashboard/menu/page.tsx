@@ -54,9 +54,9 @@ export default async function MenuListPage({
 
   return (
     <div className="space-y-8 font-jakarta">
-      <header className="flex justify-between items-center">
+      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 uppercase italic">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase italic">
             Menu <span className="text-red-600">{restaurant.name}</span>
           </h1>
           <p className="text-slate-500 font-medium">

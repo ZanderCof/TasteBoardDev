@@ -60,7 +60,7 @@ export function LegalLayout({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="bg-white rounded-[3rem] p-8 md:p-16 border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
+            <div className="bg-white rounded-[1.5rem] sm:rounded-[3rem] p-4 sm:p-8 md:p-16 border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
               
               {/* Floating Badge */}
               <div className="flex items-center gap-2 mb-8">
@@ -72,7 +72,7 @@ export function LegalLayout({
               </div>
 
               <header className="mb-12">
-                <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight mb-6">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black text-slate-900 tracking-tight mb-6">
                   {title}
                 </h1>
                 <div className="flex items-center gap-4 py-4 border-y border-slate-50">

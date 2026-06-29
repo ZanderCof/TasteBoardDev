@@ -24,7 +24,7 @@ export default function WebLinePromoPage() {
         <div className="absolute top-[20%] -left-[10%] w-[40%] h-[40%] bg-violet-100/40 blur-[100px] rounded-full" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 pt-20 pb-32 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-32 relative z-10">
         
         {/* --- HERO SECTION --- */}
         <div className="text-center space-y-6 mb-24">
@@ -41,7 +41,7 @@ export default function WebLinePromoPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold text-slate-900 tracking-tight leading-none"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-slate-900 tracking-tight leading-none"
           >
             Il tuo locale merita <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-violet-600">

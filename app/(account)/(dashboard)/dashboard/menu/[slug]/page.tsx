@@ -35,13 +35,13 @@ export default async function OwnerMenuViewPage({ params }: { params: Promise<{ 
       <div className="max-w-6xl mx-auto">
         
         {/* NAVIGATION */}
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-12">
           <Link href="/dashboard/menu" className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-red-600 transition-all">
             <ArrowLeft size={16} /> Torna alla lista
           </Link>
 
-          <Link href={`/dashboard/menu/${slug}/edit`}>
-            <button className="flex items-center gap-2 bg-slate-900 text-white px-8 py-3.5 rounded-[1.5rem] text-sm font-bold shadow-xl shadow-slate-200 hover:bg-red-600 transition-all active:scale-95">
+          <Link href={`/dashboard/menu/${slug}/edit`} className="w-full sm:w-auto">
+            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 text-white px-5 sm:px-8 py-3.5 rounded-[1.5rem] text-sm font-bold shadow-xl shadow-slate-200 hover:bg-red-600 transition-all active:scale-95">
               <Edit3 size={16} /> Modifica Contenuti
             </button>
           </Link>

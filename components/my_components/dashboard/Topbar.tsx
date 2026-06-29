@@ -12,10 +12,10 @@ interface Restaurant {
 export default function Topbar({ initialStores }: { initialStores: Restaurant[] }) {
 
   return (
-    <header className="sticky z-40 h-22 bg-white/60 backdrop-blur-xl border border-white/80 rounded-[2.5rem] px-6 flex items-center justify-between shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all">
-      
-      {/* Search Bar - Stile "Spotlight" */}
-      <div className="relative w-full max-w-md group">
+    <header className="sticky z-40 h-16 sm:h-22 bg-white/60 backdrop-blur-xl border border-white/80 rounded-[1.5rem] sm:rounded-[2.5rem] px-3 sm:px-6 flex items-center justify-between gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all">
+
+      {/* Search Bar - Stile "Spotlight" (nascosta su mobile, già coperta dalla MobileNav) */}
+      <div className="hidden sm:block relative w-full max-w-md group">
         <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
           <Search
             className="text-slate-400 group-focus-within:text-red-500 transition-colors duration-300"

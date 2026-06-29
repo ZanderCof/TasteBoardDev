@@ -31,7 +31,7 @@ export function PublicDishCard({
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex items-start gap-2 flex-wrap">
           <h3 className={cn(
-            "font-bold text-slate-900 leading-snug",
+            "font-bold text-slate-900 leading-snug line-clamp-2",
             !available && "line-through decoration-slate-400"
           )}>
             {name}
@@ -61,13 +61,15 @@ export function PublicDishCard({
       </div>
 
       {/* Immagine / placeholder */}
-      <div className="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center">
+      <div className="shrink-0 w-20 h-20 aspect-square rounded-xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center">
         {image ? (
           <Image
             src={image}
             alt={name}
             width={80}
             height={80}
+            sizes="80px"
+            loading="lazy"
             className="object-cover w-full h-full"
           />
         ) : (

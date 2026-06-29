@@ -6,7 +6,7 @@ export function FeaturesHero() {
         Semplicità & Controllo
       </div>
 
-      <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter mb-6">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-slate-900 tracking-tighter mb-6">
         Tutto quello che serve <br />
         <span className="text-red-600 italic">a chi lavora nella ristorazione.</span>
       </h1>

@@ -68,7 +68,7 @@ export default function StoreSwitcher({ initialStores }: { initialStores: Restau
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 12, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className="absolute top-full right-0 w-64 bg-white border border-slate-100 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-50 p-3 overflow-hidden"
+              className="absolute top-full right-0 w-64 max-w-[calc(100vw-2rem)] bg-white border border-slate-100 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-50 p-3 overflow-hidden"
             >
               <div className="flex items-center justify-between px-3 py-2 mb-2">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">I tuoi Locali</span>

@@ -22,7 +22,7 @@ export default function FloatingBot() {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="fixed bottom-8 right-8 z-[100] flex flex-col items-end">
+    <div className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-100 flex flex-col items-end">
       
       {/* Finestra del Bot */}
       <AnimatePresence>
@@ -31,7 +31,7 @@ export default function FloatingBot() {
             initial={{ opacity: 0, scale: 0.9, y: 20, transformOrigin: "bottom right" }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="mb-4 w-[350px] sm:w-[400px] bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden"
+            className="mb-4 w-[calc(100vw-32px)] sm:w-100 max-w-100 bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden"
           >
             {/* Header - Branding TasteBoard */}
             <div className="bg-slate-900 p-6 text-white relative">
@@ -96,7 +96,7 @@ export default function FloatingBot() {
       {/* Pulsante Trigger (Icona tonda) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-16 h-16 bg-yellow-400 rounded-full shadow-xl flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all duration-300 relative group"
+        className="w-14 h-14 sm:w-16 sm:h-16 bg-yellow-400 rounded-full shadow-xl flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all duration-300 relative group"
       >
         {/* Effetto Ping quando è chiuso per attirare l'attenzione */}
         <AnimatePresence>

@@ -11,7 +11,7 @@ export function OnboardingWrapper({ step, totalSteps, children }: OnboardingWrap
   const progress = (step / totalSteps) * 100;
 
   return (
-    <div className="max-w-2xl mx-auto py-2 px-6">
+    <div className="max-w-2xl mx-auto py-2 px-4 sm:px-6">
       {/* Progress Bar */}
       <div className="mb-12 space-y-4">
         <div className="flex justify-between text-xs font-black uppercase tracking-widest text-slate-400">
@@ -32,7 +32,7 @@ export function OnboardingWrapper({ step, totalSteps, children }: OnboardingWrap
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -20 }}
-        className="bg-white/70 backdrop-blur-xl p-8 md:p-12 rounded-[3rem] border border-white shadow-2xl"
+        className="bg-white/70 backdrop-blur-xl p-6 sm:p-8 md:p-12 rounded-[2rem] sm:rounded-[3rem] border border-white shadow-2xl"
       >
         {children}
       </motion.div>

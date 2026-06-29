@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sei offline | Nuviio</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 1.5rem;
+        text-align: center;
+        font-family: system-ui, -apple-system, sans-serif;
+        background: #ffffff;
+        color: #0a0a0a;
+      }
+      h1 {
+        font-size: 1.25rem;
+        margin: 0;
+      }
+      p {
+        margin: 0;
+        color: #555;
+        max-width: 28rem;
+      }
+      button {
+        margin-top: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.625rem;
+        border: none;
+        background: #dc2626;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sei offline</h1>
+    <p>Controlla la connessione a internet e riprova. I dati di Nuviio richiedono una connessione attiva.</p>
+    <button onclick="location.reload()">Riprova</button>
+  </body>
+</html>

@@ -27,6 +27,14 @@ export const metadata: Metadata = {
   },
   description:
     "Gestionale per ristoranti e bar: menu QR, prenotazioni, dipendenti e analisi vendite in un'unica app installabile.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon.png" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/icons/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     title: "Nuviio",

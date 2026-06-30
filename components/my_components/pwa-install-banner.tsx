@@ -10,15 +10,8 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-const DISMISSED_KEY = "pwa-banner-dismissed";
-const DISMISSED_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 giorni
-
-function isIOS() {
-  return (
-    /iphone|ipad|ipod/i.test(navigator.userAgent) &&
-    !(window.navigator as { standalone?: boolean }).standalone
-  );
-}
+const LS_KEY = "pwa-banner-dismissed";   // permanente tra sessioni
+const SS_KEY = "pwa-banner-seen";        // guardia per la sessione corrente
 
 function isStandalone() {
   return (
@@ -27,44 +20,64 @@ function isStandalone() {
   );
 }
 
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
+// Chiamata sincrona durante la prima render client-side
+// Evita il flash "banner appare → scompare" tipico dell'useEffect
+function getInitialMode(): "native" | "ios" | null {
+  if (typeof window === "undefined") return null;
+  if (isStandalone()) return null;
+  if (localStorage.getItem(LS_KEY)) return null;   // già chiuso in passato
+  if (sessionStorage.getItem(SS_KEY)) return null; // già visto questa sessione
+  if (isIOS()) return "ios";
+  return null; // native: aspetta beforeinstallprompt
+}
+
 export function PwaInstallBanner() {
+  const [mode, setMode] = useState<"native" | "ios" | null>(getInitialMode);
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
-  const [mode, setMode] = useState<"native" | "ios" | null>(null);
 
   useEffect(() => {
-    if (isStandalone()) return;
-
-    const dismissed = localStorage.getItem(DISMISSED_KEY);
-    if (dismissed && Date.now() - Number(dismissed) < DISMISSED_TTL_MS) return;
-
-    // iOS Safari: nessun evento, mostriamo istruzioni manuali
-    if (isIOS()) {
-      setMode("ios");
+    // Già gestito dal getInitialMode; qui gestiamo solo il caso native
+    if (mode === "ios") {
+      sessionStorage.setItem(SS_KEY, "1");
       return;
     }
 
-    // Chrome / Edge / Android: usa beforeinstallprompt
+    if (isStandalone() || localStorage.getItem(LS_KEY) || sessionStorage.getItem(SS_KEY)) {
+      return;
+    }
+
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       setMode("native");
+      sessionStorage.setItem(SS_KEY, "1");
     };
+
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const dismiss = () => {
+    localStorage.setItem(LS_KEY, "1");
+    sessionStorage.setItem(SS_KEY, "1");
+    setMode(null);
+  };
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
     await deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === "accepted") setMode(null);
+    if (outcome === "accepted") {
+      localStorage.setItem(LS_KEY, "1");
+      sessionStorage.setItem(SS_KEY, "1");
+      setMode(null);
+    }
     setDeferredPrompt(null);
-  };
-
-  const handleDismiss = () => {
-    localStorage.setItem(DISMISSED_KEY, String(Date.now()));
-    setMode(null);
   };
 
   return (
@@ -79,7 +92,6 @@ export function PwaInstallBanner() {
         >
           <div className="rounded-2xl bg-white shadow-xl shadow-slate-200/60 border border-slate-200/80 overflow-hidden">
 
-            {/* Riga principale */}
             <div className="flex items-center gap-3 px-4 py-3">
               <TasteBoardLogo variant="mark" size="sm" href={null} />
 
@@ -92,7 +104,7 @@ export function PwaInstallBanner() {
                 </p>
               </div>
 
-              {mode === "native" ? (
+              {mode === "native" && (
                 <button
                   onClick={handleInstall}
                   className="flex items-center gap-1.5 shrink-0 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-sm font-bold px-4 py-2 rounded-xl transition-all shadow-sm shadow-red-200"
@@ -100,15 +112,16 @@ export function PwaInstallBanner() {
                   <Download size={14} />
                   Installa
                 </button>
-              ) : (
-                // Su iOS il pulsante apre le istruzioni (il banner le mostra già sotto)
+              )}
+
+              {mode === "ios" && (
                 <span className="shrink-0 text-[10px] font-black uppercase tracking-wider text-red-600 bg-red-50 px-2 py-1 rounded-lg">
                   Safari
                 </span>
               )}
 
               <button
-                onClick={handleDismiss}
+                onClick={dismiss}
                 aria-label="Chiudi"
                 className="shrink-0 p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
               >
@@ -116,12 +129,9 @@ export function PwaInstallBanner() {
               </button>
             </div>
 
-            {/* Istruzioni iOS */}
             {mode === "ios" && (
               <div className="px-4 pb-3 flex items-center gap-2 border-t border-slate-100 pt-2.5">
-                <span className="text-xs text-slate-500 leading-snug">
-                  Tocca
-                </span>
+                <span className="text-xs text-slate-500">Tocca</span>
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 rounded-lg">
                   <Share size={11} className="text-slate-600" />
                   <span className="text-[11px] font-bold text-slate-700">Condividi</span>

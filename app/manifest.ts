@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Nuviio | TasteBoard",
-    short_name: "Nuviio",
+    name: "Tasteboard",
+    short_name: "Tasteboard",
     description:
       "Gestionale per ristoranti e bar: menu QR, prenotazioni, dipendenti e analisi vendite in un'unica app.",
     start_url: "/",
@@ -16,19 +16,19 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["business", "food", "productivity"],
     icons: [
       {
-        src: "/icons/icon-192.png",
+        src: "/api/pwa-icons/192",
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icons/icon-512.png",
+        src: "/api/pwa-icons/512",
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icons/icon-maskable-512.png",
+        src: "/api/pwa-icons/512",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

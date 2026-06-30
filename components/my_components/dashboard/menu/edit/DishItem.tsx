@@ -10,12 +10,10 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { deleteDish, updateDish } from "@/app/(account)/(dashboard)/dashboard/menu/[slug]/edit/action";
+import { AllergenPicker } from "@/components/my_components/dashboard/menu/AllergenPicker";
+import { AllergenBadge } from "@/components/my_components/AllergenBadge";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-
-/* ============================================================
-   PROPS
-   ============================================================ */
 
 interface DishItemProps {
   id: string;
@@ -24,29 +22,24 @@ interface DishItemProps {
   price: string;
   description: string;
   imageUrl?: string | null;
+  allergens?: string[];
 }
 
-/* ============================================================
-   COMPONENT
-   ============================================================ */
-
-export function DishItem({ id, menuId, name, price, description, imageUrl }: DishItemProps) {
+export function DishItem({ id, menuId, name, price, description, imageUrl, allergens = [] }: DishItemProps) {
   const [expanded, setExpanded] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  /* Local editing state */
   const [localName, setLocalName] = useState(name);
   const [localPrice, setLocalPrice] = useState(price);
   const [localDescription, setLocalDescription] = useState(description);
   const [localImageUrl, setLocalImageUrl] = useState(imageUrl ?? null);
+  const [localAllergens, setLocalAllergens] = useState<string[]>(allergens);
 
   const [isSaving, startSaving] = useTransition();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const nameTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const descTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  /* ── Save helpers ── */
 
   function saveField(field: "name" | "price" | "description", value: string) {
     startSaving(async () => {
@@ -65,21 +58,32 @@ export function DishItem({ id, menuId, name, price, description, imageUrl }: Dis
     });
   }
 
+  function saveAllergens(ids: string[]) {
+    setLocalAllergens(ids);
+    startSaving(async () => {
+      try {
+        await updateDish(id, menuId, { allergens: ids });
+      } catch {
+        toast.error("Errore nel salvataggio allergeni");
+      }
+    });
+  }
+
   function handleNameChange(v: string) {
     setLocalName(v);
     if (nameTimer.current) clearTimeout(nameTimer.current);
     nameTimer.current = setTimeout(() => saveField("name", v), 700);
   }
+
   function handleDescriptionChange(v: string) {
     setLocalDescription(v);
     if (descTimer.current) clearTimeout(descTimer.current);
     descTimer.current = setTimeout(() => saveField("description", v), 700);
   }
+
   function handlePriceBlur() {
     saveField("price", localPrice);
   }
-
-  /* ── Image upload ── */
 
   function handleImageClick() {
     fileInputRef.current?.click();
@@ -88,13 +92,10 @@ export function DishItem({ id, menuId, name, price, description, imageUrl }: Dis
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    // Preview immediata — integra con il tuo storage (Cloudinary, S3, ecc.)
     const url = URL.createObjectURL(file);
     setLocalImageUrl(url);
     toast.info("Immagine selezionata — implementa l'upload al tuo storage.");
   }
-
-  /* ── Delete ── */
 
   async function handleDelete() {
     if (!confirmDelete) {
@@ -111,10 +112,6 @@ export function DishItem({ id, menuId, name, price, description, imageUrl }: Dis
     }
   }
 
-  /* ============================================================
-     RENDER
-     ============================================================ */
-
   return (
     <div
       className={cn(
@@ -125,7 +122,7 @@ export function DishItem({ id, menuId, name, price, description, imageUrl }: Dis
         isDeleting && "opacity-40 pointer-events-none scale-98"
       )}
     >
-      {/* ── Collapsed row (sempre visibile) ── */}
+      {/* ── Collapsed row ── */}
       <div
         className="flex items-center gap-3 sm:gap-4 px-4 py-3 cursor-pointer select-none"
         onClick={() => setExpanded((v) => !v)}
@@ -163,6 +160,14 @@ export function DishItem({ id, menuId, name, price, description, imageUrl }: Dis
               {localDescription}
             </p>
           )}
+          {/* Allergen badges preview nel collapsed */}
+          {localAllergens.length > 0 && (
+            <div className="flex gap-1 mt-1 flex-wrap">
+              {localAllergens.map((id) => (
+                <AllergenBadge key={id} allergenId={id} size="sm" />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Price + chevron */}
@@ -182,8 +187,8 @@ export function DishItem({ id, menuId, name, price, description, imageUrl }: Dis
       {/* ── Expanded edit panel ── */}
       {expanded && (
         <div className="px-4 pb-4 pt-1 border-t border-slate-50 space-y-3" onClick={(e) => e.stopPropagation()}>
-          
-          {/* Immagine + note upload */}
+
+          {/* Immagine */}
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -228,13 +233,16 @@ export function DishItem({ id, menuId, name, price, description, imageUrl }: Dis
             <textarea
               value={localDescription}
               onChange={(e) => handleDescriptionChange(e.target.value)}
-              placeholder="Ingredienti, preparazione, allergeni..."
+              placeholder="Ingredienti, preparazione..."
               rows={2}
               className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all resize-none bg-slate-50/50 placeholder:text-slate-300"
             />
           </div>
 
-          {/* Prezzo */}
+          {/* Allergeni */}
+          <AllergenPicker selected={localAllergens} onChange={saveAllergens} />
+
+          {/* Prezzo + saving indicator */}
           <div className="flex items-end gap-3">
             <div className="space-y-1 flex-1 max-w-40">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Prezzo (€)</label>
@@ -252,7 +260,6 @@ export function DishItem({ id, menuId, name, price, description, imageUrl }: Dis
               </div>
             </div>
 
-            {/* Saving indicator */}
             <div className="h-10 flex items-center gap-1.5 text-xs font-bold text-slate-400 pb-0.5">
               {isSaving ? (
                 <><Loader2 size={13} className="animate-spin text-red-400" /> Salvataggio...</>

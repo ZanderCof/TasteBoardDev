@@ -2,19 +2,13 @@
 
 import { useState, useTransition, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, X, Info, TriangleAlert, CheckCircle, Megaphone, CheckCheck } from "lucide-react";
+import { Bell, X, Info, TriangleAlert, Zap, CheckCheck } from "lucide-react";
 import { markNotificationRead, markAllNotificationsRead } from "@/app/(account)/(dashboard)/dashboard/notifications/actions";
 import { formatDistanceToNow } from "date-fns";
 import { it } from "date-fns/locale";
+import type { NuviioNotification } from "@/lib/nuviio-notifications";
 
-export type NotificationItem = {
-  id: string;
-  title: string;
-  message: string;
-  type: "INFO" | "WARNING" | "SUCCESS" | "CHANGELOG";
-  createdAt: string;
-  isRead: boolean;
-};
+export type NotificationItem = NuviioNotification;
 
 const typeConfig = {
   INFO: {
@@ -24,26 +18,19 @@ const typeConfig = {
     badge: "bg-blue-100 text-blue-700",
     label: "Info",
   },
-  WARNING: {
+  UPDATE: {
+    icon: Zap,
+    color: "text-emerald-500",
+    bg: "bg-emerald-50",
+    badge: "bg-emerald-100 text-emerald-700",
+    label: "Aggiornamento",
+  },
+  MAINTENANCE: {
     icon: TriangleAlert,
     color: "text-amber-500",
     bg: "bg-amber-50",
     badge: "bg-amber-100 text-amber-700",
-    label: "Avviso",
-  },
-  SUCCESS: {
-    icon: CheckCircle,
-    color: "text-emerald-500",
-    bg: "bg-emerald-50",
-    badge: "bg-emerald-100 text-emerald-700",
-    label: "Risolto",
-  },
-  CHANGELOG: {
-    icon: Megaphone,
-    color: "text-red-500",
-    bg: "bg-red-50",
-    badge: "bg-red-100 text-red-700",
-    label: "Novità",
+    label: "Manutenzione",
   },
 } as const;
 
@@ -60,7 +47,6 @@ export function NotificationsCenter({
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  // Chiudi il pannello cliccando fuori
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (
@@ -158,7 +144,7 @@ export function NotificationsCenter({
                 </div>
               ) : (
                 notifications.map((n) => {
-                  const cfg = typeConfig[n.type];
+                  const cfg = typeConfig[n.type] ?? typeConfig.INFO;
                   const Icon = cfg.icon;
                   return (
                     <div

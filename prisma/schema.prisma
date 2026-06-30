@@ -165,12 +165,13 @@ model NotificationRead {
 }
 
 model Dish {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   description String?
-  price       Decimal @db.Decimal(10, 2)
+  price       Decimal  @db.Decimal(10, 2)
   image       String?
-  available   Boolean @default(true) // ← NUOVO CAMPO
+  available   Boolean  @default(true)
+  allergens   String[]
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)

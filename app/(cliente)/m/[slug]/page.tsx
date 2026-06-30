@@ -1,8 +1,9 @@
-// app/menu/[slug]/page.tsx  (o il path della tua route pubblica)
 import { CategoryNav } from "@/components/my_components/cliente/CategoryNav";
 import { PublicDishCard } from "@/components/my_components/cliente/PublicDishCard";
 import { PublicHeader } from "@/components/my_components/cliente/PublicHeader";
+import { AllergenBadge } from "@/components/my_components/AllergenBadge";
 import prisma from "@/lib/prisma";
+import { getAllergen } from "@/lib/allergens";
 import { notFound } from "next/navigation";
 
 export default async function PublicMenuPage({
@@ -21,7 +22,6 @@ export default async function PublicMenuPage({
         include: {
           dishes: {
             orderBy: { name: "asc" },
-            // `available` è ora incluso automaticamente da Prisma
           },
         },
       },
@@ -36,6 +36,11 @@ export default async function PublicMenuPage({
     0
   );
 
+  // Raccoglie tutti gli allergeni unici presenti nel menu
+  const allAllergenIds = Array.from(
+    new Set(menu.categories.flatMap((c) => c.dishes.flatMap((d) => d.allergens)))
+  ).filter((id) => getAllergen(id) !== undefined);
+
   return (
     <div className="bg-[#F8F7F5] min-h-screen">
       <PublicHeader
@@ -45,12 +50,27 @@ export default async function PublicMenuPage({
         categoriesCount={menu.categories.length}
       />
 
-      {/* Sticky category nav */}
       <CategoryNav categories={menu.categories.map((c) => ({ id: c.id, name: c.name }))} />
 
-      {/* Avviso piatti terminati — solo se ce ne sono */}
-      {unavailableCount > 0 && (
+      {/* Sezione allergeni presenti nel menu */}
+      {allAllergenIds.length > 0 && (
         <div className="max-w-2xl mx-auto px-4 pt-4">
+          <div className="bg-white border border-slate-100 rounded-2xl px-4 py-3 shadow-sm">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2.5">
+              Allergeni presenti in questo menu
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {allAllergenIds.map((id) => (
+                <AllergenBadge key={id} allergenId={id} size="md" showLabel />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Avviso piatti terminati */}
+      {unavailableCount > 0 && (
+        <div className="max-w-2xl mx-auto px-4 pt-3">
           <div className="flex items-center gap-2 bg-amber-50 border border-amber-100 rounded-2xl px-4 py-2.5 text-xs font-bold text-amber-700">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
             {unavailableCount}{" "}
@@ -83,6 +103,7 @@ export default async function PublicMenuPage({
                   description={dish.description ?? ""}
                   image={dish.image ?? undefined}
                   available={dish.available}
+                  allergens={dish.allergens}
                 />
               ))}
             </div>
@@ -90,7 +111,6 @@ export default async function PublicMenuPage({
         ))}
       </main>
 
-      {/* Footer branding */}
       <footer className="py-10 flex flex-col items-center gap-1 opacity-30">
         <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">Powered by</p>
         <p className="text-sm font-black tracking-tighter italic text-slate-800">TasteBoard</p>

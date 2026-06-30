@@ -5,6 +5,7 @@ export interface Dish {
   name: string;
   price: string;
   description?: string;
+  allergens?: string[];
 }
 
 export interface Category {

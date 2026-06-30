@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Rocket, ArrowRight, Utensils } from "lucide-react";
+import Link from "next/link";
 
 export function FinalCTA() {
   return (
@@ -38,12 +39,15 @@ export function FinalCTA() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 px-10 h-16 text-xl font-bold rounded-2xl shadow-xl shadow-red-700/50 transition-all hover:scale-105 group"
+              asChild
             >
-              Crea il tuo menu gratis
-              <Rocket className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <Link href="/register">
+                Crea il tuo menu gratis
+                <Rocket className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Button>
             
             <Button 

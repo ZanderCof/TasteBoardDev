@@ -1,7 +1,7 @@
-// components/my_components/cliente/PublicDishCard.tsx
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { UtensilsCrossed } from "lucide-react";
+import { AllergenBadge } from "@/components/my_components/AllergenBadge";
 
 interface PublicDishCardProps {
   name: string;
@@ -9,6 +9,7 @@ interface PublicDishCardProps {
   description?: string;
   image?: string;
   available?: boolean;
+  allergens?: string[];
 }
 
 export function PublicDishCard({
@@ -17,6 +18,7 @@ export function PublicDishCard({
   description,
   image,
   available = true,
+  allergens = [],
 }: PublicDishCardProps) {
   return (
     <div
@@ -37,7 +39,6 @@ export function PublicDishCard({
             {name}
           </h3>
 
-          {/* Badge terminato */}
           {!available && (
             <span className="shrink-0 inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full border border-slate-200">
               <UtensilsCrossed size={9} />
@@ -58,6 +59,15 @@ export function PublicDishCard({
         )}>
           €{price.toFixed(2)}
         </p>
+
+        {/* Badge allergeni */}
+        {allergens.length > 0 && (
+          <div className="flex flex-wrap gap-1 pt-1">
+            {allergens.map((id) => (
+              <AllergenBadge key={id} allergenId={id} size="sm" />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Immagine / placeholder */}

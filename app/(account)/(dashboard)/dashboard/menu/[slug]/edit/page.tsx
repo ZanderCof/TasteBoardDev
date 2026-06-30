@@ -64,6 +64,7 @@ export default async function EditMenuPage({
                       name={dish.name}
                       price={dish.price.toString()}
                       description={dish.description ?? ""}
+                      allergens={dish.allergens}
                     />
                   ))}
                 </div>

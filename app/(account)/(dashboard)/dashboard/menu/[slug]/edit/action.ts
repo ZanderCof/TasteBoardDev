@@ -97,7 +97,8 @@ export async function addDish(
   data: {
     name: string;
     price: string | number;
-    description?: string
+    description?: string;
+    allergens?: string[];
   }
 ) {
   const { userId, userEmail, restaurantId } = await requireMenuOwnership(menuId);
@@ -116,7 +117,8 @@ export async function addDish(
       name: data.name,
       price: finalPrice,
       description: data.description || null,
-      categoryId: categoryId, // Più diretto dell'uso di connect
+      allergens: data.allergens ?? [],
+      categoryId: categoryId,
     }
   });
 
@@ -131,7 +133,7 @@ export async function addDish(
   });
 }
 
-export async function updateDish(id: string, menuId: string, data: { name?: string, price?: number, description?: string }) {
+export async function updateDish(id: string, menuId: string, data: { name?: string; price?: number; description?: string; allergens?: string[] }) {
   const { userId, userEmail, restaurantId } = await requireMenuOwnership(menuId);
   await prisma.dish.update({
     where: { id, category: { menuId } },

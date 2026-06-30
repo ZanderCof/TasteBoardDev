@@ -41,8 +41,9 @@ export async function createMenuAction(data: {
               dishes: {
                 create: cat.dishes.map((dish: Dish) => ({
                   name: dish.name,
-                  // Gestione sicura del prezzo
                   price: parseFloat(dish.price.toString().replace(',', '.')),
+                  description: dish.description || null,
+                  allergens: dish.allergens ?? [],
                 })),
               },
             })),

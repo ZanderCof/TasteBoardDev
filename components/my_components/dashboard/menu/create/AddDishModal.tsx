@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, UtensilsCrossed, Euro } from "lucide-react";
 import { useMenuStore } from "@/app/(account)/(dashboard)/dashboard/menu/create/useMenuStore";
+import { AllergenPicker } from "@/components/my_components/dashboard/menu/AllergenPicker";
 import { cn } from "@/lib/utils";
 
 export function AddDishModal({
@@ -31,22 +32,23 @@ export function AddDishModal({
     name: "",
     price: "",
     description: "",
+    allergens: [] as string[],
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.price) return;
 
-    // Conversione sicura del prezzo per evitare errori di virgole/punti
     const cleanPrice = formData.price.replace(",", ".");
 
     addDishToStore(categoryId, {
       name: formData.name,
       price: cleanPrice,
       description: formData.description,
+      allergens: formData.allergens,
     });
 
-    setFormData({ name: "", price: "", description: "" });
+    setFormData({ name: "", price: "", description: "", allergens: [] });
     onClose();
   };
 
@@ -63,8 +65,7 @@ export function AddDishModal({
           <DialogTitle className="text-4xl font-bold text-slate-900 tracking-tight leading-none">
             Nuova <span className="text-red-600">Portata</span>
           </DialogTitle>
-          
-          {/* FIX: Risolve il Warning "Missing Description" */}
+
           <DialogDescription className="text-slate-400 font-medium text-sm pt-2">
             Aggiungi un piatto alla sezione selezionata. Sarà visibile immediatamente sul menu.
           </DialogDescription>
@@ -112,7 +113,15 @@ export function AddDishModal({
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="es. Guanciale croccante, pecorino romano, pepe..."
-                className="rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-red-500 focus:bg-white min-h-[100px] resize-none font-medium p-4 transition-all outline-none"
+                className="rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-red-500 focus:bg-white min-h-20 resize-none font-medium p-4 transition-all outline-none"
+              />
+            </div>
+
+            {/* ALLERGENI */}
+            <div className="space-y-2.5">
+              <AllergenPicker
+                selected={formData.allergens}
+                onChange={(ids) => setFormData({ ...formData, allergens: ids })}
               />
             </div>
           </div>
@@ -120,9 +129,12 @@ export function AddDishModal({
           <DialogFooter className="pt-4 flex-col sm:flex-row gap-3">
             <button
               type="submit"
-              className="w-full py-5 bg-slate-900 hover:bg-red-600 text-white rounded-2xl font-bold text-sm uppercase tracking-widest shadow-xl shadow-slate-200 transition-all flex items-center justify-center gap-3 active:scale-95"
+              className={cn(
+                "w-full py-5 bg-slate-900 hover:bg-red-600 text-white rounded-2xl font-bold text-sm uppercase tracking-widest",
+                "shadow-xl shadow-slate-200 transition-all flex items-center justify-center gap-3 active:scale-95"
+              )}
             >
-              <Plus size={20} strokeWidth={3} /> 
+              <Plus size={20} strokeWidth={3} />
               Salva Portata
             </button>
           </DialogFooter>

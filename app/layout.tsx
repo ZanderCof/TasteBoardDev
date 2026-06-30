@@ -3,6 +3,8 @@ import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/my_components/providers";
 import { ServiceWorkerRegistration } from "@/components/my_components/service-worker-registration";
+import { PwaInstallBanner } from "@/components/my_components/pwa-install-banner";
+import { BetaBanner } from "@/components/my_components/beta-banner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,7 +59,9 @@ export default function RootLayout({
         <main className="">
           <Providers>{children}</Providers>
         </main>
+        <BetaBanner />
         <ServiceWorkerRegistration />
+        <PwaInstallBanner />
       </body>
     </html>
   );

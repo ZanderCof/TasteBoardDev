@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Utensils, Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { TasteBoardLogo } from "@/components/my_components/logo";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,7 +27,10 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 py-4 md:px-6 md:py-6">
+    <header
+      className="fixed left-0 right-0 z-50 transition-all duration-300 px-4 py-4 md:px-6 md:py-6"
+      style={{ top: "var(--beta-h, 0px)" }}
+    >
       <nav
         className={`mx-auto max-w-7xl transition-all duration-500 ease-in-out border border-slate-200/60 backdrop-blur-md
           ${isScrolled 
@@ -37,14 +41,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           
           {/* LOGO */}
-          <Link href="/" className="flex items-center gap-2 group shrink-0">
-            <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white shadow-lg transition-all group-hover:rotate-12 group-hover:scale-110">
-              <Utensils size={22} strokeWidth={2.5} />
-            </div>
-            <span className="text-xl md:text-2xl font-black tracking-tighter text-slate-900">
-              Taste<span className="text-red-600">board</span>
-            </span>
-          </Link>
+          <TasteBoardLogo size="md" href="/" />
 
           {/* LINKS CENTRALI (Desktop) */}
           <div className="hidden md:flex items-center gap-1 bg-slate-100/30 rounded-full p-1 border border-slate-200/20">

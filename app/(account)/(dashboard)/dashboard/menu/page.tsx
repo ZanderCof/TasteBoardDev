@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { redirect } from "next/navigation";
 import MenuListCard from "@/components/my_components/dashboard/menu/MenuListCard";
+import { PlanUsageBadge } from "@/components/my_components/dashboard/PlanUsageBadge";
 
 // Aggiungiamo searchParams per leggere l'ID dall'URL
 export default async function MenuListPage({ 
@@ -54,7 +55,7 @@ export default async function MenuListPage({
 
   return (
     <div className="space-y-8 font-jakarta">
-      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase italic">
             Menu <span className="text-red-600">{restaurant.name}</span>
@@ -63,11 +64,12 @@ export default async function MenuListPage({
             Gestione listini per questo locale.
           </p>
         </div>
+        <PlanUsageBadge used={menusFromDb.length} max={3} label="menu" />
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {/* Passiamo l'ID del ristorante alla card di creazione */}
-        <CreateMenuCard restaurantId={restaurant.id} />
+        <CreateMenuCard restaurantId={restaurant.id} disabled={menusFromDb.length >= 3} />
 
         {menus.length > 0 ? (
           menus.map((menu) => (

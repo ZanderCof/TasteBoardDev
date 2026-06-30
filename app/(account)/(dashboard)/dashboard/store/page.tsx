@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { StoreCard } from "@/components/my_components/dashboard/store/StoreCard";
 import { AddStoreCard } from "@/components/my_components/dashboard/store/AddStoreCard";
+import { PlanUsageBadge } from "@/components/my_components/dashboard/PlanUsageBadge";
 
 export default async function StoreSettingsPage() {
   // 1. Recupero sessione sul server
@@ -19,7 +20,7 @@ export default async function StoreSettingsPage() {
 
   return (
     <div className="space-y-12 font-jakarta max-w-7xl mx-auto pb-24 px-4 pt-8">
-      <div className="flex items-center justify-between px-4">
+      <div className="flex items-start justify-between px-4">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase">
             I tuoi <span className="text-red-600">Locali</span>
@@ -28,6 +29,7 @@ export default async function StoreSettingsPage() {
             Gestisci e monitora i tuoi punti vendita attivi.
           </p>
         </div>
+        <PlanUsageBadge used={stores.length} max={1} label="locali" />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -36,7 +38,7 @@ export default async function StoreSettingsPage() {
         ))}
         
         {/* Card per aggiungere un nuovo locale sempre alla fine */}
-        <AddStoreCard />
+        <AddStoreCard disabled={stores.length >= 1} />
       </div>
     </div>
   );

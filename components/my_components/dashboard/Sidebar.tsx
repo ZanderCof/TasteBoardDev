@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { TasteBoardLogo } from "@/components/my_components/logo";
 import {
   LayoutDashboard,
   Utensils,
@@ -101,16 +102,12 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
     <aside className="w-full lg:w-72 h-full flex flex-col bg-white border-r-2 border-slate-200 relative shadow-2xl">
       {/* HEADER - Logo più scuro */}
       <div className="h-24 flex items-center justify-between px-8 border-b-2 border-slate-100">
-        <Link href={"/dashboard"}>
-          <div className="flex flex-col leading-tight">
-            <span className="text-2xl font-black text-slate-900 tracking-tighter">
-              Taste<span className="text-red-600 font-black">board</span>
-            </span>
-            <span className="text-[10px] text-slate-900 font-black tracking-widest uppercase">
-              Beta Testing V 1.0
-            </span>
-          </div>
-        </Link>
+        <div className="flex flex-col gap-1">
+          <TasteBoardLogo size="sm" href="/dashboard" />
+          <span className="text-[9px] text-slate-400 font-black tracking-widest uppercase pl-0.5">
+            Beta v1.0
+          </span>
+        </div>
 
         <button
           onClick={onClose}

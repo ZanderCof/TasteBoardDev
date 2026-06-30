@@ -5,6 +5,7 @@ import { useState } from "react";
 import Sidebar from "@/components/my_components/dashboard/Sidebar";
 import { Menu } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { TasteBoardLogo } from "@/components/my_components/logo";
 
 export default function MobileNav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -12,7 +13,7 @@ export default function MobileNav() {
   return (
     <>
       <header className="lg:hidden h-16 flex items-center justify-between px-6 bg-white border-b border-slate-200 shrink-0">
-        <span className="font-black text-slate-900 tracking-tighter">Tasteboard.</span>
+        <TasteBoardLogo size="sm" href="/dashboard" />
         <button
           onClick={() => setIsMobileMenuOpen(true)}
           aria-label="Apri menu"

@@ -41,6 +41,11 @@ export async function createStore(data: CreateStoreInput) {
 
     const userId = session.user.id;
 
+    const existingCount = await prisma.restaurant.count({ where: { userId } });
+    if (existingCount >= 1) {
+      return { success: false, error: "Puoi gestire al massimo 1 locale con il piano attuale." };
+    }
+
     // Uniamo Indirizzo e Città per il campo 'address' del DB
     const fullAddress = data.city ? `${data.address}, ${data.city}` : data.address;
 

@@ -23,6 +23,11 @@ export async function createMenuAction(data: {
 
     if (!restaurant) throw new Error("Ristorante non trovato. Completa l'onboarding.");
 
+    const menuCount = await prisma.menu.count({ where: { restaurantId: restaurant.id } });
+    if (menuCount >= 3) {
+      return { success: false, error: "Hai raggiunto il limite di 3 menu per il piano attuale." };
+    }
+
     // 3. Creiamo il menu usando l'ID reale
     const menu = await prisma.$transaction(async (tx) => {
       return await tx.menu.create({

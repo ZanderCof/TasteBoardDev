@@ -1,7 +1,7 @@
 "use client";
 
-import { Utensils } from "lucide-react";
 import Link from "next/link";
+import { TasteBoardLogo } from "@/components/my_components/logo";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -43,14 +43,7 @@ export default function Footer() {
           
           {/* LOGO & INFO */}
           <div className="lg:col-span-2 space-y-6">
-            <Link href="/" className="flex items-center gap-2 group w-fit">
-              <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:rotate-12">
-                <Utensils size={24} />
-              </div>
-              <span className="text-2xl font-black tracking-tighter text-slate-900">
-                Taste<span className="text-red-600">board</span>
-              </span>
-            </Link>
+            <TasteBoardLogo size="md" href="/" />
             <p className="text-slate-500 max-w-xs leading-relaxed">
               Il sistema operativo per la ristorazione moderna. Gestisci menu, turni e costi con un unico strumento intuitivo.
             </p>
